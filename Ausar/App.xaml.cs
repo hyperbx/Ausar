@@ -14,7 +14,7 @@ namespace Ausar
 
         public static Memory GameMemory { get; set; }
 
-        public static bool IsUIDebug { get; } = false;
+        public static bool IsFrontendDebug { get; } = false;
 
         protected override void OnStartup(StartupEventArgs e)
         {

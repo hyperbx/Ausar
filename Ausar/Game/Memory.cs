@@ -1,5 +1,6 @@
 ﻿using Ausar.Enums;
 using Ausar.Interop;
+using Ausar.Logger;
 using Ausar.Services;
 using System.Diagnostics;
 
@@ -77,7 +78,7 @@ namespace Ausar.Game
             {
 #if DEBUG
                 if (value.Refresh)
-                    Debug.WriteLine("Refreshing graphics device...");
+                    LoggerService.Utility("Refreshing graphics device...");
 #endif
 
                 _pms.WriteProtected(_pms.ASLR(0x144857610), value);
@@ -171,7 +172,7 @@ namespace Ausar.Game
             Task.Run(Update);
 
 #if DEBUG
-            Debug.WriteLine("Game connected.");
+            LoggerService.Utility("Game connected.");
 #endif
         }
 
@@ -185,7 +186,7 @@ namespace Ausar.Game
             }
 
 #if DEBUG
-            Debug.WriteLine("Game disconnected.");
+            LoggerService.Utility("Game disconnected.");
 #endif
         }
 
@@ -203,7 +204,7 @@ namespace Ausar.Game
                 if (handle == 0)
                 {
 #if DEBUG
-                    Debug.WriteLine($"Failed to open thread {thread.Id}...");
+                    LoggerService.Error($"Failed to open thread {thread.Id}...");
 #endif
 
                     continue;
@@ -216,13 +217,13 @@ namespace Ausar.Game
                 if (threadInfo.TebBaseAddress == 0)
                 {
 #if DEBUG
-                    Debug.WriteLine($"Invalid environment block in thread {thread.Id}...");
+                    LoggerService.Error($"Invalid environment block in thread {thread.Id}...");
 #endif
 
                     continue;
                 }
 #if DEBUG
-                Debug.WriteLine($"Successfully retrieved info from thread {thread.Id}.");
+                LoggerService.Utility($"Successfully retrieved info from thread {thread.Id}.");
 #endif
                 var tlsPtr = _pms.Read<nint>(threadInfo.TebBaseAddress + 0x58);
                 var tlsIndex = _pms.Read<int>(_pms.ASLR(0x145F1D56C));
@@ -230,7 +231,7 @@ namespace Ausar.Game
                 return _pms.Read<nint>(tlsPtr + (tlsIndex * 8));
             }
 #if DEBUG
-            Debug.WriteLine("Could not find main thread...");
+            LoggerService.Error("Could not find main thread...");
 #endif
             return 0;
         }
@@ -440,7 +441,7 @@ namespace Ausar.Game
             }
             catch (Exception out_ex)
             {
-                Debug.WriteLine($"An unhandled exception occurred whilst installing patches. Ignoring...\n{out_ex}\n");
+                LoggerService.Error($"An unhandled exception occurred whilst installing patches. Ignoring...\n{out_ex}\n");
             }
 
             _isInitialised = true;
@@ -476,7 +477,7 @@ namespace Ausar.Game
             }
             catch (Exception out_ex)
             {
-                Debug.WriteLine($"An unhandled exception occurred whilst uninstalling patches. Ignoring...\n{out_ex}\n");
+                LoggerService.Error($"An unhandled exception occurred whilst uninstalling patches. Ignoring...\n{out_ex}\n");
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using Ausar.Extensions;
 using Ausar.Helpers;
 using Ausar.Interop;
+using Ausar.Logger;
 using Ausar.Services.Enums;
 using Gee.External.Capstone.X86;
 using Keystone;
@@ -152,7 +153,7 @@ namespace Ausar.Services
                 var length = buffer.Buffer.Length + minHookLength;
                 var memPtr = Alloc(length);
 #if DEBUG
-                Debug.WriteLine($"Writing mid-asm hook code to 0x{memPtr:X} in process {Process.Id}...");
+                LoggerService.Utility($"Writing mid-asm hook code to 0x{memPtr:X} in process {Process.Id}...");
 #endif
                 // Write code buffer to our allocated memory in the attached process.
                 WriteBytes(memPtr, buffer.Buffer);

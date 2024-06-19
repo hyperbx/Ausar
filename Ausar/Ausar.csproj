@@ -7,8 +7,8 @@
     <InformationalVersion>1.0.0</InformationalVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseWPF>True</UseWPF>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <ApplicationIcon>Resources\Icons\Icon.ico</ApplicationIcon>
     <UseWindowsForms>False</UseWindowsForms>
     <IncludeAllContentForSelfExtract>True</IncludeAllContentForSelfExtract>

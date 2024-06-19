@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ausar"
         xmlns:au="clr-namespace:Ausar.UI.Controls"
+        xmlns:auConverters="clr-namespace:Ausar.UI.Converters"
         xmlns:ip="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
@@ -13,6 +14,10 @@
         Title=" Ausar"
         Height="645" MinHeight="645"
         Width="785" MinWidth="785">
+
+    <Window.Resources>
+        <auConverters:LogLevelToBrushConverter x:Key="LogLevelToBrushConverter"/>
+    </Window.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -215,15 +220,34 @@
                     <Grid>
                         <TextBlock Margin="0,8,0,0" HorizontalAlignment="Right" FontStyle="Italic" FontWeight="DemiBold" Foreground="DarkRed"
                                    Text="These settings are not recommended, use with caution."/>
-                        
+
                         <GroupBox Header="Experimental">
-
                             <au:DescribedCheckBox Content="Allow Dynamic Aspect Ratio In-Game" Description="Determines whether the resolution can be changed whilst in a game."
-                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsAllowDynamicAspectRatioInGame}"/>
-
+                                                  IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsAllowDynamicAspectRatioInGame}"/>
                         </GroupBox>
                     </Grid>
                 </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Debug" Visibility="{Binding Source={x:Static local:App.IsFrontendDebug}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <CheckBox Margin="30,25,30,0" Name="DisableRuntimePatcherCheckBox" Content="Disable Runtime Patcher" IsChecked="True" VerticalAlignment="Top"/>
+                    
+                    <ListView Name="DebugLog" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="15,7,0,-7">
+                                    <TextBlock Text="{Binding Message}" Foreground="{Binding LogLevel, Converter={StaticResource LogLevelToBrushConverter}}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </TabItem>
             
             <TabItem Header="About">

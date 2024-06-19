@@ -2,6 +2,7 @@
 using Ausar.Game;
 using Ausar.Helpers;
 using Ausar.Interop;
+using Ausar.Logger.Handlers;
 using ModernWpf.Controls;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -24,7 +25,6 @@ namespace Ausar
             InitializeComponent();
 
             FPSHyperlinkHint.Text = string.Format(FPSHyperlinkHint.Text, User32.GetRefreshRate());
-            AusarVersionText.Text = $"Version {AssemblyHelper.GetInformationalVersion()}";
 
             _resolutionScaleUpdateTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(1000) };
             _resolutionScaleUpdateTimer.Tick += (s, e) =>
@@ -36,6 +36,10 @@ namespace Ausar
 
                 App.GameMemory.IsResolutionScaleUpdated = true;
             };
+
+            DebugLog.ItemsSource = FrontendLogger.Logs;
+
+            AusarVersionText.Text = $"Version {AssemblyHelper.GetInformationalVersion()}";
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -88,16 +92,27 @@ namespace Ausar
             try
             {
 #endif
-                if (App.GameMemory == null && !App.IsUIDebug)
+                var isPatchingEnabled = App.IsFrontendDebug
+                    ? DisableRuntimePatcherCheckBox.IsChecked == false
+                    : true;
+
+                if (isPatchingEnabled)
                 {
-                    var version = Information.GetVersionString(in_process);
+                    if (App.GameMemory == null)
+                    {
+                        var version = Information.GetVersionString(in_process);
 
-                    if (version != Information.ExpectedVersion)
-                        throw new NotSupportedException($"The installed version of Halo 5: Forge is not supported.\n\nExpected: {Information.ExpectedVersion}\nReceived: {version}");
+                        if (version != Information.ExpectedVersion)
+                            throw new NotSupportedException($"The installed version of Halo 5: Forge is not supported.\n\nExpected: {Information.ExpectedVersion}\nReceived: {version}");
 
-                    HaloUWPVersionText.Text = version;
+                        HaloUWPVersionText.Text = version;
 
-                    App.GameMemory = new(in_process);
+                        App.GameMemory = new(in_process);
+                    }
+                }
+                else
+                {
+                    OnProcessWait();
                 }
 
                 Status($"Halo 5: Forge is running (PID {in_process.Id})...", Brushes.DarkGreen);
