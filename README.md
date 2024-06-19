@@ -54,6 +54,7 @@ Feature|Origin
 --------|------
 FPS|H5Tweak
 FOV|Exuberant
+High FOV Fix|Exuberant
 Apply Custom FOV to Vehicles|Exuberant
 Dynamic Aspect Ratio|Ausar, H5Tweak
 Resolution Scale|Ausar
