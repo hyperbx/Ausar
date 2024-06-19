@@ -19,9 +19,9 @@ A trainer for Halo 5: Forge for adjusting graphics settings.
 # Motivation
 *tl;dr - I wanted to simplify graphics tweaks down to a single application for a friend group.*
 
-Halo 5: Forge is undoubtely a very unpopulated game, so putting effort into something like this might seem a bit strange.
+Halo 5: Forge is undoubtedly a very unpopulated game, so putting effort into something like this might seem a bit strange.
 
-I recently added it to the roster of Halo games that I play online with a group. I use a 144Hz ultrawide display, everyone else also has high refresh rate.
+I recently added it to the roster of Halo games that I play online with a group. I use a 144Hz ultrawide display, everyone else also has high refresh rate displays.
 
 There were tools for ultrawide support made a long time ago, but they were for an older version of the game and used hard-coded addresses, so they no longer worked.
 
