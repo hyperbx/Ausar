@@ -419,8 +419,17 @@ namespace Ausar.Game
                 if (string.IsNullOrEmpty(Map))
                     return;
 
+                PatchApplyCustomFOVToVehicles(App.Settings.IsApplyCustomFOVToVehicles);
+                PatchDynamicAspectRatio(App.Settings.IsDynamicAspectRatio);
+                PatchToggleFrontend(App.Settings.IsToggleFrontend);
+                PatchToggleNavigationPoints(App.Settings.IsToggleNavigationPoints);
+                PatchToggleThirdPersonCamera(App.Settings.IsToggleThirdPersonCamera);
+
                 FPS = App.Settings.FPS;
                 FOV = App.Settings.FOV;
+                IsSmallerCrosshairScale = App.Settings.IsToggleSmallerCrosshairScale;
+                IsWorldSpaceViewModel = !App.Settings.IsToggleWorldSpaceViewModel;
+
                 DrawDistanceScalar = App.Settings.DrawDistanceScalar;
                 ObjectDetailScalar = App.Settings.ObjectDetailScalar;
                 BSPGeometryDrawDistanceScalar = App.Settings.BSPGeometryDrawDistanceScalar;
@@ -430,14 +439,6 @@ namespace Ausar.Game
                 IsFog = App.Settings.IsToggleFog;
                 IsWeather = App.Settings.IsToggleWeather;
                 IsRagdoll = App.Settings.IsToggleRagdoll;
-                IsSmallerCrosshairScale = App.Settings.IsToggleSmallerCrosshairScale;
-                IsWorldSpaceViewModel = !App.Settings.IsToggleWorldSpaceViewModel;
-
-                PatchApplyCustomFOVToVehicles(App.Settings.IsApplyCustomFOVToVehicles);
-                PatchDynamicAspectRatio(App.Settings.IsDynamicAspectRatio);
-                PatchToggleFrontend(App.Settings.IsToggleFrontend);
-                PatchToggleNavigationPoints(App.Settings.IsToggleNavigationPoints);
-                PatchToggleThirdPersonCamera(App.Settings.IsToggleThirdPersonCamera);
             }
             catch (Exception out_ex)
             {
@@ -455,8 +456,17 @@ namespace Ausar.Game
                           deal for its current use case though. */
                 _cancellationTokenSource.Cancel();
 
+                PatchApplyCustomFOVToVehicles(false);
+                PatchDynamicAspectRatio(false);
+                PatchToggleFrontend(true);
+                PatchToggleNavigationPoints(true);
+                PatchToggleThirdPersonCamera(false);
+
                 FPS = 60;
                 FOV = 78;
+                IsSmallerCrosshairScale = false;
+                IsWorldSpaceViewModel = false;
+
                 DrawDistanceScalar = 1.0f;
                 ObjectDetailScalar = 1.0f;
                 BSPGeometryDrawDistanceScalar = 1.0f;
@@ -466,14 +476,6 @@ namespace Ausar.Game
                 IsFog = true;
                 IsWeather = true;
                 IsRagdoll = true;
-                IsSmallerCrosshairScale = false;
-                IsWorldSpaceViewModel = false;
-
-                PatchApplyCustomFOVToVehicles(false);
-                PatchDynamicAspectRatio(false);
-                PatchToggleFrontend(true);
-                PatchToggleNavigationPoints(true);
-                PatchToggleThirdPersonCamera(false);
             }
             catch (Exception out_ex)
             {
