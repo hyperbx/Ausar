@@ -15,7 +15,7 @@ namespace Ausar.Game
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
-        private bool _isInitialised = false;
+        private bool _isDynamicAspectRatioInitialised = false;
 
         public bool IsResolutionScaleUpdated { get; set; } = false;
 
@@ -262,7 +262,7 @@ namespace Ausar.Game
 
             if (in_isEnabled)
             {
-                if (!_isInitialised)
+                if (!_isDynamicAspectRatioInitialised)
                 {
                     // Hook aspect ratio code for Smart Link.
                     _pms.WriteAsmHook
@@ -284,11 +284,15 @@ namespace Ausar.Game
 
                         smartLinkAspectRatioHookAddr
                     );
+
+                    _isDynamicAspectRatioInitialised = true;
                 }
             }
             else
             {
                 _pms.Restore(smartLinkAspectRatioHookAddr);
+
+                _isDynamicAspectRatioInitialised = false;
             }
 
             if (App.Settings.IsAllowDynamicAspectRatioInGame)
@@ -444,8 +448,6 @@ namespace Ausar.Game
             {
                 LoggerService.Error($"An unhandled exception occurred whilst installing patches. Ignoring...\n{out_ex}\n");
             }
-
-            _isInitialised = true;
         }
 
         public void UninstallPatches()
