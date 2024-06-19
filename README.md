@@ -16,6 +16,14 @@ A trainer for Halo 5: Forge for adjusting graphics settings.
 - .NET 8.0 Runtime ([x86](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-8.0.4-windows-x86-installer), [x64](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-8.0.4-windows-x64-installer))
 - [Halo 5: Forge](https://www.microsoft.com/store/productId/9NBLGGH4V0FR?ocid=pdpshare) (1.194.6192.2)
 
+# Issues
+Please report any unknown issues on the issue tracker [here](https://github.com/hyperbx/Ausar/issues).
+
+### Dynamic Aspect Ratio
+- Resizing the game window too many times will cause UI elements and the font renderer to start artefacting until they eventually disappear (which is why being at the main menu is a requirement for now).
+- UI elements rendered in 3D space (such as navigation points) are still drawn at 16:9 and may appear stretched at non-16:9 resolutions.
+- Ludicrously wide aspect ratios may have graphical errors with certain buffers being drawn at the incorrect offset.
+
 # Motivation
 *tl;dr - I wanted to simplify graphics tweaks down to a single application for a friend group.*
 
