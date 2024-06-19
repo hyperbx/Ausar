@@ -13,7 +13,7 @@ A trainer for Halo 5: Forge for adjusting graphics settings.
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ### Running
-- .NET 8.0 Runtime ([x86](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-8.0.4-windows-x86-installer), [x64](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-8.0.4-windows-x64-installer))
+- .NET 8.0 Desktop Runtime ([x86](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.6-windows-x86-installer), [x64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.6-windows-x64-installer))
 - [Halo 5: Forge](https://www.microsoft.com/store/productId/9NBLGGH4V0FR?ocid=pdpshare) (1.194.6192.2)
 
 # Issues
