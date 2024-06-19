@@ -11,6 +11,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApplicationIcon>Resources\Icons\Icon.ico</ApplicationIcon>
     <UseWindowsForms>False</UseWindowsForms>
+    <IncludeAllContentForSelfExtract>True</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
