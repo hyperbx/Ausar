@@ -1,0 +1,297 @@
+﻿<Window x:Class="Ausar.Trainer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ausar"
+        xmlns:au="clr-namespace:Ausar.UI.Controls"
+        xmlns:ip="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.IsIconVisible="True"
+        mc:Ignorable="d"
+        Title=" Ausar"
+        Height="645" MinHeight="645"
+        Width="785" MinWidth="785">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+
+        <TabControl>
+            <TabItem Header="Patches">
+                <ScrollViewer>
+                    <StackPanel Margin="30,25,30,5">
+                        <GroupBox Header="General" Margin="0,0,0,10">
+                            <StackPanel>
+
+                                <StackPanel Margin="0,0,0,20">
+                                    <Grid Margin="0,0,0,10">
+                                        <TextBlock Margin="2,0,0,0" Text="FPS"/>
+
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock FontStyle="Italic" Foreground="Gray" Text="The desired frame rate limit (recommended "/>
+                                            
+                                            <TextBlock>
+                                                <Hyperlink Click="Tweaks_FPS_Hyperlink_Click">
+                                                    <TextBlock Name="FPSHyperlinkHint" FontStyle="Italic">{0} FPS</TextBlock>
+                                                </Hyperlink>
+                                            </TextBlock>
+                                            
+                                            <TextBlock FontStyle="Italic" Foreground="Gray" Text=" for your primary display)."/>
+                                        </StackPanel>
+                                    </Grid>
+                                    
+                                    <ui:NumberBox Name="FPSNumberBox" Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FPS}"
+                                                  Minimum="30" Maximum="500" SpinButtonPlacementMode="Inline"/>
+                                </StackPanel>
+
+                                <Grid>
+                                    <Expander Name="FOVExpander" Margin="1,4,0,10" Template="{StaticResource RevealExpander}">
+                                        <Grid Margin="23,65,0,10">
+                                            <CheckBox Margin="1,0,0,0" Content="Apply Custom FOV to Vehicles"
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToVehicles}"/>
+                                        </Grid>
+                                    </Expander>
+
+                                    <StackPanel Margin="25,0,0,20">
+                                        <au:HorizontalFieldLabel Caption="FOV" Description="The desired field of view (recommended 110 FOV max to prevent view model clipping)."/>
+                                        <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FOV}"
+                                                      Minimum="60" Maximum="150" SpinButtonPlacementMode="Inline"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid>
+                                    <Expander Name="ResolutionScaleExpander" Margin="1,10,0,8" Template="{StaticResource RevealExpander}"
+                                              IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}">
+                                        <StackPanel Margin="24,25,0,20">
+                                            <au:HorizontalFieldLabel x:Name="ResolutionScaleFieldLabel" Caption="Resolution Scale"
+                                                                     Description="{Binding Source={x:Static local:App.Settings}, Path=ResolutionString}"/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ResolutionScale}"
+                                                          Minimum="25" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="Tweaks_ResolutionScale_ValueChanged"/>
+                                        </StackPanel>
+                                    </Expander>
+
+                                    <Grid VerticalAlignment="Top">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <CheckBox Margin="25,0,0,0" Content="Dynamic Aspect Ratio"
+                                                  IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatio}"
+                                                  IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}"/>
+
+                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontStyle="Italic" Foreground="Gray">
+                                            Dynamically adjusts the aspect ratio to the current window size <Hyperlink Click="Tweaks_DynamicAspectRatio_Experimental_Hyperlink_Click">(experimental)</Hyperlink>.
+                                        </TextBlock>
+                                    </Grid>
+                                </Grid>
+
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Performance" Margin="0,0,0,10">
+                            <Grid>
+                                <Expander Name="PerformanceExpander" Margin="0,40,0,20" Template="{StaticResource RevealExpanderNoInput}">
+                                    <StackPanel Margin="0,35,0,-10">
+
+                                        <StackPanel Margin="0,5,0,20">
+                                            <au:HorizontalFieldLabel Caption="General Draw Distance Scalar" Description="The scalar for general draw distance."/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DrawDistanceScalar}"
+                                                          Minimum="0.5" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,0,0,20">
+                                            <au:HorizontalFieldLabel Caption="Object Detail Scalar" Description="The scalar for the distance LOD models should be swapped in at."/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ObjectDetailScalar}"
+                                                          Minimum="0.5" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,0,0,20">
+                                            <au:HorizontalFieldLabel Caption="BSP Geometry Draw Distance Scalar" Description="The scalar for the distance instanced geometry should unload at."/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=BSPGeometryDrawDistanceScalar}"
+                                                          Minimum="0.5" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,0,0,20">
+                                            <au:HorizontalFieldLabel Caption="Effect Draw Distance Scalar" Description="The scalar for details like smoke and distant lighting."/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=EffectDrawDistanceScalar}"
+                                                          Minimum="0" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,0,0,20">
+                                            <au:HorizontalFieldLabel Caption="Particle Draw Distance Scalar" Description="The scalar for details like sparks and flares."/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ParticleDrawDistanceScalar}"
+                                                          Minimum="0" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,0,0,25">
+                                            <au:HorizontalFieldLabel Caption="Decorator Draw Distance Scalar" Description="The scalar for details like grass and debris."/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DecoratorDrawDistanceScalar}"
+                                                          Minimum="0" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                        </StackPanel>
+
+                                        <au:DescribedCheckBox Content="Toggle Fog" Description="Determines whether fog is rendered on certain maps."
+                                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleFog}"/>
+
+                                        <au:DescribedCheckBox Content="Toggle Weather" Description="Determines whether weather effects are rendered on certain maps."
+                                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleWeather}"/>
+
+                                    </StackPanel>
+                                </Expander>
+
+                                <StackPanel Margin="0,0,0,10">
+                                    <au:HorizontalFieldLabel Caption="Preset" Description="The graphics preset tuned for the chosen performance setting."/>
+                                    <ComboBox Name="PerformancePresetField" HorizontalAlignment="Stretch" SelectionChanged="Tweaks_PerformancePreset_SelectionChanged"
+                                              SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=PerformancePreset}">
+                                        <ComboBoxItem Content="High"/>
+                                        <ComboBoxItem Content="Medium"/>
+                                        <ComboBoxItem Content="Low"/>
+                                        <ComboBoxItem Content="Very Low"/>
+                                        <ComboBoxItem Content="Custom"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Header="Miscellaneous">
+                            <StackPanel>
+
+                                <au:DescribedCheckBox Content="Toggle Frontend" Description="Determines whether the UI and HUD are drawn and interactive."
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleFrontend}"/>
+
+                                <au:DescribedCheckBox Content="Toggle Navigation Points" Description="Determines whether navigation points will be drawn to mark weapons."
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleNavigationPoints}"/>
+
+                                <au:DescribedCheckBox Content="Toggle Ragdolls" Description="Determines whether players will ragdoll or animate upon dying."
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleRagdoll}"/>
+
+                                <au:DescribedCheckBox Content="Toggle Smaller Crosshair Scale" Description="Determines whether some crosshairs will use a smaller scale."
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleSmallerCrosshairScale}"/>
+
+                                <au:DescribedCheckBox Content="Toggle Third Person Camera" Description="Determines whether the camera will be positioned behind the player."
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleThirdPersonCamera}"/>
+
+                                <au:DescribedCheckBox Content="Toggle World Space View Model" Description="Determines whether the player view model is rendered in world space."
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleWorldSpaceViewModel}"/>
+
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Settings">
+                <StackPanel Margin="30,25,30,10">
+                    <GroupBox Header="General" Margin="0,0,0,10">
+                        <StackPanel>
+
+                            <StackPanel Margin="0,0,0,20">
+                                <au:HorizontalFieldLabel Caption="Patch Rate" Description="The rate at which patches will be applied to the game (in milliseconds)."/>
+                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=PatchFrequency}"
+                                      Minimum="16" SpinButtonPlacementMode="Inline"/>
+                            </StackPanel>
+
+                            <au:DescribedCheckBox Content="Uninstall Patches on Exit" Description="Determines whether patches will remain installed upon closing Ausar."
+                                                  IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsUninstallPatchesOnExit}"/>
+
+                            <Grid Margin="0,15,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Button Margin="-1,0,0,0" Content="Restore Defaults" Click="Settings_ClearSettings_Click"/>
+                                <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontStyle="Italic" Foreground="Gray"
+                                           Text="Clears the current configuration and restores default values for everything."/>
+                                
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <Grid>
+                        <TextBlock Margin="0,8,0,0" HorizontalAlignment="Right" FontStyle="Italic" FontWeight="DemiBold" Foreground="DarkRed"
+                                   Text="These settings are not recommended, use with caution."/>
+                        
+                        <GroupBox Header="Experimental">
+
+                            <au:DescribedCheckBox Content="Allow Dynamic Aspect Ratio In-Game" Description="Determines whether the resolution can be changed whilst in a game."
+                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsAllowDynamicAspectRatioInGame}"/>
+
+                        </GroupBox>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            
+            <TabItem Header="About">
+                <Grid Margin="15">
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="15,5,15,0">
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock FontSize="32" Text="Ausar"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Margin="0,0,20,0" Background="Transparent" Click="About_GitHub_Click">
+                                <ip:PackIconMaterial Kind="Github" Width="32" Height="32"/>
+                            </Button>
+                            <TextBlock Name="AusarVersionText" VerticalAlignment="Center" FontSize="16" Text="Version 1.0.0"/>
+                        </StackPanel>
+                        
+                    </Grid>
+
+                    <Separator Grid.Row="1" Margin="0,20,0,0" VerticalAlignment="Top"/>
+
+                    <StackPanel Grid.Row="1" Margin="15,40,15,15">
+                        
+                        <GroupBox Margin="0,0,0,5" Header="Halo 5: Forge">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="UWP version:"/>
+                                <TextBlock Name="HaloUWPVersionText" Margin="5,0,0,0" Text="0.0.0.0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Credits">
+                            <StackPanel>
+                                <TextBlock Margin="0,0,0,5">
+                                    <Hyperlink NavigateUri="https://github.com/hyperbx" RequestNavigate="About_Hyperlink_RequestNavigate">Hyper</Hyperlink> - programming, research
+                                </TextBlock>
+                                <TextBlock Margin="0,0,0,5">
+                                    <Hyperlink NavigateUri="https://www.youtube.com/@gamecheat13" RequestNavigate="About_Hyperlink_RequestNavigate">Gamecheat13</Hyperlink> - research
+                                </TextBlock>
+                                <TextBlock Margin="0,0,0,5">
+                                    <Hyperlink NavigateUri="https://github.com/Snaacky" RequestNavigate="About_Hyperlink_RequestNavigate">Snaacky</Hyperlink> - research
+                                </TextBlock>
+                                <TextBlock Margin="0,0,0,5">
+                                    <Hyperlink NavigateUri="https://github.com/no1dead" RequestNavigate="About_Hyperlink_RequestNavigate">no1dead</Hyperlink> - research
+                                </TextBlock>
+                                <TextBlock Margin="0,0,0,5" Text="Xbox7887 - research"/>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                    </StackPanel>
+                    
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar Name="StatusBar" Grid.Row="1" Background="DarkRed">
+            <Grid Margin="8,0,0,1">
+                <TextBlock Name="StatusText" Text="Waiting for Halo 5: Forge..."/>
+            </Grid>
+        </StatusBar>
+    </Grid>
+    
+</Window>
