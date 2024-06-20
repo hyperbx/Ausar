@@ -1,5 +1,11 @@
-# Ausar
-A trainer for Halo 5: Forge for adjusting graphics settings.
+<p align="center">
+    <img src="https://raw.githubusercontent.com/hyperbx/Ausar/main/Ausar/Resources/Images/Icon.png"
+         width="128"/>
+</p>
+
+<h1 align="center">Ausar</h1>
+
+<p align="center">A trainer for Halo 5: Forge for configuring graphics settings.</p>
 
 # Features
 - Adjustable FPS limit.
