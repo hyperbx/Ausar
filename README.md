@@ -1,5 +1,11 @@
-# Ausar
-A trainer for Halo 5: Forge for adjusting graphics settings.
+<p align="center">
+    <img src="https://raw.githubusercontent.com/hyperbx/Ausar/main/Ausar/Resources/Images/Icon.png"
+         width="128"/>
+</p>
+
+<h1 align="center">Ausar</h1>
+
+<p align="center">A trainer for Halo 5: Forge for configuring graphics settings.</p>
 
 # Features
 - Adjustable FPS limit.
@@ -13,15 +19,23 @@ A trainer for Halo 5: Forge for adjusting graphics settings.
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ### Running
-- .NET 8.0 Runtime ([x86](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-8.0.4-windows-x86-installer), [x64](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-8.0.4-windows-x64-installer))
+- .NET 8.0 Desktop Runtime ([x86](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.6-windows-x86-installer), [x64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.6-windows-x64-installer))
 - [Halo 5: Forge](https://www.microsoft.com/store/productId/9NBLGGH4V0FR?ocid=pdpshare) (1.194.6192.2)
+
+# Issues
+Please report any unknown issues on the issue tracker [here](https://github.com/hyperbx/Ausar/issues).
+
+### Dynamic Aspect Ratio
+- Resizing the game window too many times will cause UI elements and the font renderer to start artefacting until they eventually disappear (which is why being at the main menu is a requirement for now).
+- UI elements rendered in 3D space (such as navigation points) are still drawn at 16:9 and may appear stretched at non-16:9 resolutions.
+- Ludicrously wide aspect ratios may have graphical errors with certain buffers being drawn at the incorrect offset.
 
 # Motivation
 *tl;dr - I wanted to simplify graphics tweaks down to a single application for a friend group.*
 
-Halo 5: Forge is undoubtely a very unpopulated game, so putting effort into something like this might seem a bit strange.
+Halo 5: Forge is undoubtedly a very unpopulated game, so putting effort into something like this might seem a bit strange.
 
-I recently added it to the roster of Halo games that I play online with a group. I use a 144Hz ultrawide display, everyone else also has high refresh rate.
+I recently added it to the roster of Halo games that I play online with a group. I use a 144Hz ultrawide display, everyone else also has high refresh rate displays.
 
 There were tools for ultrawide support made a long time ago, but they were for an older version of the game and used hard-coded addresses, so they no longer worked.
 
@@ -46,6 +60,7 @@ Feature|Origin
 --------|------
 FPS|H5Tweak
 FOV|Exuberant
+High FOV Fix|Exuberant
 Apply Custom FOV to Vehicles|Exuberant
 Dynamic Aspect Ratio|Ausar, H5Tweak
 Resolution Scale|Ausar
