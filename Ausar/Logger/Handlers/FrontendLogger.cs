@@ -15,6 +15,9 @@ namespace Ausar.Logger.Handlers
 
         public void Write(object in_message, ELogLevel in_logLevel)
         {
+            if (!App.IsFrontendDebug)
+                return;
+
             var log = new Log(in_message.ToString(), in_logLevel);
 
             for (int i = 0; i < Logs.Count; i++)
@@ -26,7 +29,14 @@ namespace Ausar.Logger.Handlers
                 }
             }
 
-            App.Current.Dispatcher.Invoke(() => Logs.Add(log));
+            try
+            {
+                App.Current.Dispatcher.Invoke(() => Logs.Add(log));
+            }
+            catch (TaskCanceledException)
+            {
+                // ignored...
+            }
         }
 
         public void WriteLine(object in_message, ELogLevel in_logLevel)
