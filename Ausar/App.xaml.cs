@@ -1,6 +1,4 @@
-﻿using Ausar.Game;
-using Ausar.Helpers;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -12,7 +10,7 @@ namespace Ausar
 
         public static Configuration Settings { get; private set; } = new Configuration().Import();
 
-        public static Memory GameMemory { get; set; }
+        public static Game.Memory GameMemory { get; set; }
 
         public static bool IsFrontendDebug { get; } = false;
 
@@ -28,7 +26,18 @@ namespace Ausar
                 Environment.Exit(-1);
             };
 #endif
+
             base.OnStartup(e);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (!Settings.IsUninstallPatchesOnExit)
+                return;
+
+            GameMemory?.UninstallPatches();
+
+            base.OnExit(e);
         }
 
         public static void Restart()

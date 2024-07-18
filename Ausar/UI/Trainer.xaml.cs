@@ -47,16 +47,6 @@ namespace Ausar
             Task.Run(() => WaitForProcess(_cancellationTokenSource.Token));
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            base.OnClosing(e);
-
-            if (!App.Settings.IsUninstallPatchesOnExit)
-                return;
-
-            App.GameMemory?.UninstallPatches();
-        }
-
         private void Status(string in_text, Brush in_colour = null)
         {
             StatusText.Text = in_text;
