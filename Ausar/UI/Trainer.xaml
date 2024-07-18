@@ -12,6 +12,7 @@
         ui:TitleBar.IsIconVisible="True"
         mc:Ignorable="d"
         Title=" Ausar"
+        Background="Black"
         Height="645" MinHeight="645"
         Width="785" MinWidth="785">
 
@@ -39,13 +40,15 @@
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <TextBlock FontStyle="Italic" Foreground="Gray" Text="The desired frame rate limit (recommended "/>
                                             
-                                            <TextBlock>
-                                                <Hyperlink Click="Tweaks_FPS_Hyperlink_Click">
+                                            <TextBlock Margin="0,0,4,0">
+                                                <Hyperlink Click="Patches_FPS_Hyperlink_Click">
                                                     <TextBlock Name="FPSHyperlinkHint" FontStyle="Italic">{0} FPS</TextBlock>
                                                 </Hyperlink>
                                             </TextBlock>
-                                            
-                                            <TextBlock FontStyle="Italic" Foreground="Gray" Text=" for your primary display)."/>
+
+                                            <TextBlock FontStyle="Italic" Foreground="Gray">
+                                                for your primary display) <Hyperlink Click="Patches_FPS_Experimental_Hyperlink_Click">(experimental)</Hyperlink>.
+                                            </TextBlock>
                                         </StackPanel>
                                     </Grid>
                                     
@@ -61,7 +64,7 @@
                                         </Grid>
                                     </Expander>
 
-                                    <StackPanel Margin="25,0,0,20">
+                                    <StackPanel Margin="24,0,0,20">
                                         <au:HorizontalFieldLabel Caption="FOV" Description="The desired field of view (recommended 110 FOV max to prevent view model clipping)."/>
                                         <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FOV}"
                                                       Minimum="60" Maximum="150" SpinButtonPlacementMode="Inline"/>
@@ -75,7 +78,7 @@
                                             <au:HorizontalFieldLabel x:Name="ResolutionScaleFieldLabel" Caption="Resolution Scale"
                                                                      Description="{Binding Source={x:Static local:App.Settings}, Path=ResolutionString}"/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ResolutionScale}"
-                                                          Minimum="25" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="Tweaks_ResolutionScale_ValueChanged"/>
+                                                          Minimum="25" Maximum="200" SpinButtonPlacementMode="Inline" ValueChanged="Patches_ResolutionScale_ValueChanged"/>
                                         </StackPanel>
                                     </Expander>
 
@@ -85,12 +88,12 @@
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
 
-                                        <CheckBox Margin="25,0,0,0" Content="Dynamic Aspect Ratio"
+                                        <CheckBox Margin="24,0,0,0" Content="Dynamic Aspect Ratio"
                                                   IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatio}"
                                                   IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}"/>
 
                                         <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontStyle="Italic" Foreground="Gray">
-                                            Dynamically adjusts the aspect ratio to the current window size <Hyperlink Click="Tweaks_DynamicAspectRatio_Experimental_Hyperlink_Click">(experimental)</Hyperlink>.
+                                            Dynamically adjusts the aspect ratio to the current window size <Hyperlink Click="Patches_DynamicAspectRatio_Experimental_Hyperlink_Click">(experimental)</Hyperlink>.
                                         </TextBlock>
                                     </Grid>
                                 </Grid>
@@ -106,37 +109,37 @@
                                         <StackPanel Margin="0,5,0,20">
                                             <au:HorizontalFieldLabel Caption="General Draw Distance Scalar" Description="The scalar for general draw distance."/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DrawDistanceScalar}"
-                                                          Minimum="0.5" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                         </StackPanel>
 
                                         <StackPanel Margin="0,0,0,20">
                                             <au:HorizontalFieldLabel Caption="Object Detail Scalar" Description="The scalar for the distance LOD models should be swapped in at."/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ObjectDetailScalar}"
-                                                          Minimum="0.5" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                         </StackPanel>
 
                                         <StackPanel Margin="0,0,0,20">
                                             <au:HorizontalFieldLabel Caption="BSP Geometry Draw Distance Scalar" Description="The scalar for the distance instanced geometry should unload at."/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=BSPGeometryDrawDistanceScalar}"
-                                                          Minimum="0.5" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                         </StackPanel>
 
                                         <StackPanel Margin="0,0,0,20">
                                             <au:HorizontalFieldLabel Caption="Effect Draw Distance Scalar" Description="The scalar for details like smoke and distant lighting."/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=EffectDrawDistanceScalar}"
-                                                          Minimum="0" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                         </StackPanel>
 
                                         <StackPanel Margin="0,0,0,20">
                                             <au:HorizontalFieldLabel Caption="Particle Draw Distance Scalar" Description="The scalar for details like sparks and flares."/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ParticleDrawDistanceScalar}"
-                                                          Minimum="0" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                         </StackPanel>
 
                                         <StackPanel Margin="0,0,0,25">
                                             <au:HorizontalFieldLabel Caption="Decorator Draw Distance Scalar" Description="The scalar for details like grass and debris."/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DecoratorDrawDistanceScalar}"
-                                                          Minimum="0" Maximum="3.0" SpinButtonPlacementMode="Inline" SmallChange="0.1"/>
+                                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                         </StackPanel>
 
                                         <au:DescribedCheckBox Content="Toggle Fog" Description="Determines whether fog is rendered on certain maps."
@@ -150,7 +153,7 @@
 
                                 <StackPanel Margin="0,0,0,10">
                                     <au:HorizontalFieldLabel Caption="Preset" Description="The graphics preset tuned for the chosen performance setting."/>
-                                    <ComboBox Name="PerformancePresetField" HorizontalAlignment="Stretch" SelectionChanged="Tweaks_PerformancePreset_SelectionChanged"
+                                    <ComboBox Name="PerformancePresetField" HorizontalAlignment="Stretch" SelectionChanged="Patches_PerformancePreset_SelectionChanged"
                                               SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=PerformancePreset}">
                                         <ComboBoxItem Content="High"/>
                                         <ComboBoxItem Content="Medium"/>
@@ -168,7 +171,7 @@
                                 <au:DescribedCheckBox Content="Toggle Frontend" Description="Determines whether the UI and HUD are drawn and interactive."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleFrontend}"/>
 
-                                <au:DescribedCheckBox Content="Toggle Navigation Points" Description="Determines whether navigation points will be drawn to mark weapons."
+                                <au:DescribedCheckBox Content="Toggle Navigation Points" Description="Determines whether navigation points are drawn for weapons, players, etc."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleNavigationPoints}"/>
 
                                 <au:DescribedCheckBox Content="Toggle Ragdolls" Description="Determines whether players will ragdoll or animate upon dying."
@@ -176,6 +179,9 @@
 
                                 <au:DescribedCheckBox Content="Toggle Smaller Crosshair Scale" Description="Determines whether some crosshairs will use a smaller scale."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleSmallerCrosshairScale}"/>
+
+                                <au:DescribedCheckBox Content="Toggle Smart Link" Description="Determines whether the overlay is visible for some weapons whilst aiming down sights."
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleSmartLink}"/>
 
                                 <au:DescribedCheckBox Content="Toggle Third Person Camera" Description="Determines whether the camera will be positioned behind the player."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleThirdPersonCamera}"/>

@@ -3,6 +3,7 @@ using Ausar.Helpers;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 
 namespace Ausar
 {
@@ -10,7 +11,7 @@ namespace Ausar
     {
         private static readonly string _configPath = $"{AssemblyHelper.GetAssemblyName()}.json";
 
-        #region Default Initialisers
+        #region Property Initialisers
 
         private int _performancePreset = (int)EPerformancePreset.Low;
 
@@ -26,7 +27,7 @@ namespace Ausar
 
         public bool IsDynamicAspectRatio { get; set; } = false;
 
-        public float ResolutionScale { get; set; } = 100.0f;
+        public int ResolutionScale { get; set; } = 100;
 
         public int PerformancePreset
         {
@@ -39,45 +40,45 @@ namespace Ausar
                 switch ((EPerformancePreset)_performancePreset)
                 {
                     case EPerformancePreset.High:
-                        DrawDistanceScalar = 3.0f;
-                        ObjectDetailScalar = 3.0f;
-                        BSPGeometryDrawDistanceScalar = 3.0f;
-                        EffectDrawDistanceScalar = 3.0f;
-                        ParticleDrawDistanceScalar = 3.0f;
-                        DecoratorDrawDistanceScalar = 3.0f;
+                        DrawDistanceScalar = 300;
+                        ObjectDetailScalar = 300;
+                        BSPGeometryDrawDistanceScalar = 300;
+                        EffectDrawDistanceScalar = 300;
+                        ParticleDrawDistanceScalar = 300;
+                        DecoratorDrawDistanceScalar = 300;
                         IsToggleFog = true;
                         IsToggleWeather = true;
                         break;
 
                     case EPerformancePreset.Medium:
-                        DrawDistanceScalar = 2.0f;
-                        ObjectDetailScalar = 2.0f;
-                        BSPGeometryDrawDistanceScalar = 2.0f;
-                        EffectDrawDistanceScalar = 2.0f;
-                        ParticleDrawDistanceScalar = 2.0f;
-                        DecoratorDrawDistanceScalar = 2.0f;
+                        DrawDistanceScalar = 200;
+                        ObjectDetailScalar = 200;
+                        BSPGeometryDrawDistanceScalar = 200;
+                        EffectDrawDistanceScalar = 200;
+                        ParticleDrawDistanceScalar = 200;
+                        DecoratorDrawDistanceScalar = 200;
                         IsToggleFog = true;
                         IsToggleWeather = true;
                         break;
 
                     case EPerformancePreset.Low:
-                        DrawDistanceScalar = 1.0f;
-                        ObjectDetailScalar = 1.0f;
-                        BSPGeometryDrawDistanceScalar = 1.0f;
-                        EffectDrawDistanceScalar = 1.0f;
-                        ParticleDrawDistanceScalar = 1.0f;
-                        DecoratorDrawDistanceScalar = 1.0f;
+                        DrawDistanceScalar = 100;
+                        ObjectDetailScalar = 100;
+                        BSPGeometryDrawDistanceScalar = 100;
+                        EffectDrawDistanceScalar = 100;
+                        ParticleDrawDistanceScalar = 100;
+                        DecoratorDrawDistanceScalar = 100;
                         IsToggleFog = true;
                         IsToggleWeather = true;
                         break;
 
                     case EPerformancePreset.VeryLow:
-                        DrawDistanceScalar = 0.75f;
-                        ObjectDetailScalar = 0.75f;
-                        BSPGeometryDrawDistanceScalar = 0.75f;
-                        EffectDrawDistanceScalar = 0.0f;
-                        ParticleDrawDistanceScalar = 0.0f;
-                        DecoratorDrawDistanceScalar = 0.0f;
+                        DrawDistanceScalar = 75;
+                        ObjectDetailScalar = 75;
+                        BSPGeometryDrawDistanceScalar = 75;
+                        EffectDrawDistanceScalar = 0;
+                        ParticleDrawDistanceScalar = 0;
+                        DecoratorDrawDistanceScalar = 0;
                         IsToggleFog = false;
                         IsToggleWeather = false;
                         break;
@@ -85,17 +86,17 @@ namespace Ausar
             }
         }
 
-        public float DrawDistanceScalar { get; set; } = 1.0f;
+        public int DrawDistanceScalar { get; set; } = 100;
 
-        public float ObjectDetailScalar { get; set; } = 1.0f;
+        public int ObjectDetailScalar { get; set; } = 100;
 
-        public float BSPGeometryDrawDistanceScalar { get; set; } = 1.0f;
+        public int BSPGeometryDrawDistanceScalar { get; set; } = 100;
 
-        public float EffectDrawDistanceScalar { get; set; } = 1.0f;
+        public int EffectDrawDistanceScalar { get; set; } = 100;
 
-        public float ParticleDrawDistanceScalar { get; set; } = 1.0f;
+        public int ParticleDrawDistanceScalar { get; set; } = 100;
 
-        public float DecoratorDrawDistanceScalar { get; set; } = 1.0f;
+        public int DecoratorDrawDistanceScalar { get; set; } = 100;
 
         public bool IsToggleFog { get; set; } = true;
 
@@ -108,6 +109,8 @@ namespace Ausar
         public bool IsToggleRagdoll { get; set; } = true;
 
         public bool IsToggleSmallerCrosshairScale { get; set; } = false;
+
+        public bool IsToggleSmartLink { get; set; } = true;
 
         public bool IsToggleThirdPersonCamera { get; set; } = false;
 
@@ -144,8 +147,19 @@ namespace Ausar
         {
             if (in_isDefault || !File.Exists(_configPath))
                 return Export(in_isDefault);
-
-            return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(_configPath));
+#if !DEBUG
+            try
+            {
+#endif
+                return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(_configPath));
+#if !DEBUG
+            }
+            catch (JsonReaderException out_ex)
+            {
+                MessageBox.Show($"Failed to import configuration!\n\n{out_ex.Message}\n\nThe configuration will now be reset.", "Ausar", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+#endif
+            return Export(in_isDefault);
         }
 
         public Configuration Export(bool in_isDefault = false)

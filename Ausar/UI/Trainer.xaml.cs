@@ -1,10 +1,8 @@
 ﻿using Ausar.Enums;
 using Ausar.Game;
 using Ausar.Helpers;
-using Ausar.Interop;
 using Ausar.Logger.Handlers;
 using ModernWpf.Controls;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +22,7 @@ namespace Ausar
         {
             InitializeComponent();
 
-            FPSHyperlinkHint.Text = string.Format(FPSHyperlinkHint.Text, User32.GetRefreshRate());
+            FPSHyperlinkHint.Text = string.Format(FPSHyperlinkHint.Text, User32Helper.GetRefreshRate());
 
             _resolutionScaleUpdateTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(1000) };
             _resolutionScaleUpdateTimer.Tick += (s, e) =>
@@ -147,12 +145,32 @@ namespace Ausar
             Status("Waiting for Halo 5: Forge...", Brushes.DarkRed);
         }
 
-        private void Tweaks_FPS_Hyperlink_Click(object sender, RoutedEventArgs e)
+        private void Patches_FPS_Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            App.Settings.FPS = User32.GetRefreshRate();
+            App.Settings.FPS = User32Helper.GetRefreshRate();
         }
 
-        private void Tweaks_DynamicAspectRatio_Experimental_Hyperlink_Click(object sender, RoutedEventArgs e)
+        private void Patches_FPS_Experimental_Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            var message =
+            """
+            This feature is experimental and may result in unexpected behaviour.
+
+            Known issues;
+            • Certain weapons may fire at a faster rate at higher frame rates.
+            • Thruster Pack may boost with improper trajectory on slopes at higher frame rates.
+            """;
+
+            new ContentDialog()
+            {
+                Title = "FPS",
+                Content = message,
+                PrimaryButtonText = "OK"
+            }
+            .ShowAsync();
+        }
+
+        private void Patches_DynamicAspectRatio_Experimental_Hyperlink_Click(object sender, RoutedEventArgs e)
         {
             var message =
             """
@@ -175,13 +193,13 @@ namespace Ausar
             .ShowAsync();
         }
 
-        private void Tweaks_ResolutionScale_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        private void Patches_ResolutionScale_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             _resolutionScaleUpdateTimer?.Stop();
             _resolutionScaleUpdateTimer?.Start();
         }
 
-        private void Tweaks_PerformancePreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Patches_PerformancePreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             PerformanceExpander.IsExpanded = (EPerformancePreset)PerformancePresetField.SelectedIndex == EPerformancePreset.Custom;
         }
