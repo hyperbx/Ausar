@@ -16,6 +16,9 @@ namespace Ausar.Game
         private CancellationTokenSource _cancellationTokenSource = new();
 
         private bool _isDynamicAspectRatioInitialised = false;
+
+        private int[] _simPresentIntervals = [60, 30, 120];
+
         public Process Process { get; set; }
 
         public bool IsResolutionScaleUpdated { get; set; } = false;
@@ -40,6 +43,11 @@ namespace Ausar.Game
                 for (int i = 0; i < 20; i += 10)
                     Process.WriteProtected(Process.ToASLR(0x143425078) + i, fps);
             }
+        }
+
+        public int SimPresentInterval
+        {
+            get => _simPresentIntervals[Process.Read<int>(Process.ToASLR(0x145EB08B4))];
         }
 
         // Research from Exuberant
@@ -257,22 +265,22 @@ namespace Ausar.Game
 
         private void PatchDynamicAspectRatio(bool in_isEnabled)
         {
-            var smartLinkAspectRatioHookAddr = _pms.ASLR(0x14162D4BC);
+            var smartLinkAspectRatioHookAddr = Process.ToASLR(0x14162D4BC);
 
             if (in_isEnabled)
             {
                 if (!_isDynamicAspectRatioInitialised)
                 {
                     // Hook aspect ratio code for Smart Link.
-                    _pms.WriteAsmHook
+                    Process.WriteAsmHook
                     (
                         $@"
-                            mov    r8, {_pms.ASLR(0x14333E458)} ; Store pointer to real aspect ratio in R8.
-                            movss  xmm6, dword ptr [r8]         ; Store real aspect ratio in XMM6.
-                            mov    r9d, 0x3FE38E39              ; Store 1.777777777777778f in R9D.
-                            movd   xmm7, r9d                    ; Copy R9D to XMM7.
-                            divss  xmm6, xmm7                   ; Divide real aspect ratio (XMM6) by default aspect ratio (XMM7).
-                            mulss  xmm0, xmm6                   ; Multiply Smart Link aspect ratio (XMM0) by our divided value (XMM6).
+                            mov    r8, {Process.ToASLR(0x14333E458)} ; Store pointer to real aspect ratio in R8.
+                            movss  xmm6, dword ptr [r8]              ; Store real aspect ratio in XMM6.
+                            mov    r9d, 0x3FE38E39                   ; Store 1.777777777777778f in R9D.
+                            movd   xmm7, r9d                         ; Copy R9D to XMM7.
+                            divss  xmm6, xmm7                        ; Divide real aspect ratio (XMM6) by default aspect ratio (XMM7).
+                            mulss  xmm0, xmm6                        ; Multiply Smart Link aspect ratio (XMM0) by our divided value (XMM6).
 
                             ; Restore original code.
                             movups [rbx], xmm0
@@ -289,7 +297,7 @@ namespace Ausar.Game
             }
             else
             {
-                _pms.Restore(smartLinkAspectRatioHookAddr);
+                Process.RestoreMemory(smartLinkAspectRatioHookAddr);
 
                 _isDynamicAspectRatioInitialised = false;
             }
@@ -373,6 +381,33 @@ namespace Ausar.Game
             }
         }
 
+        private void PatchNetworkIntegrity(bool in_isEnabled)
+        {
+            var addrs = new nint[] { Process.ToASLR(0x142297E41), Process.ToASLR(0x142297F34) };
+
+            if (in_isEnabled)
+            {
+                var networkTickRate = SimPresentInterval;
+
+                if (SimPresentInterval == 120)
+                    networkTickRate = 60;
+
+                foreach (var addr in addrs)
+                {
+                    Process.PreserveMemory(addr, 5);
+
+                    // Patch networking tick rate to original rate.
+                    Process.WriteProtected<byte>(addr, 0xB8);
+                    Process.WriteProtected(addr + 1, networkTickRate);
+                }
+            }
+            else
+            {
+                foreach (var addr in addrs)
+                    Process.RestoreMemory(addr);
+            }
+        }
+
         private void PatchToggleFrontend(bool in_isEnabled)
         {
             // Patch instruction operand to force return value.
@@ -424,6 +459,7 @@ namespace Ausar.Game
 
                 PatchApplyCustomFOVToVehicles(App.Settings.IsApplyCustomFOVToVehicles);
                 PatchDynamicAspectRatio(App.Settings.IsDynamicAspectRatio);
+                PatchNetworkIntegrity(FPS > 60);
                 PatchToggleFrontend(App.Settings.IsToggleFrontend);
                 PatchToggleNavigationPoints(App.Settings.IsToggleNavigationPoints);
                 PatchToggleThirdPersonCamera(App.Settings.IsToggleThirdPersonCamera);
@@ -433,12 +469,12 @@ namespace Ausar.Game
                 IsSmallerCrosshairScale = App.Settings.IsToggleSmallerCrosshairScale;
                 IsWorldSpaceViewModel = !App.Settings.IsToggleWorldSpaceViewModel;
 
-                DrawDistanceScalar = App.Settings.DrawDistanceScalar;
-                ObjectDetailScalar = App.Settings.ObjectDetailScalar;
-                BSPGeometryDrawDistanceScalar = App.Settings.BSPGeometryDrawDistanceScalar;
-                EffectDrawDistanceScalar = App.Settings.EffectDrawDistanceScalar;
-                ParticleDrawDistanceScalar = App.Settings.ParticleDrawDistanceScalar;
-                DecoratorDrawDistanceScalar = App.Settings.DecoratorDrawDistanceScalar;
+                DrawDistanceScalar = App.Settings.DrawDistanceScalar / 100.0f;
+                ObjectDetailScalar = App.Settings.ObjectDetailScalar / 100.0f;
+                BSPGeometryDrawDistanceScalar = App.Settings.BSPGeometryDrawDistanceScalar / 100.0f;
+                EffectDrawDistanceScalar = App.Settings.EffectDrawDistanceScalar / 100.0f;
+                ParticleDrawDistanceScalar = App.Settings.ParticleDrawDistanceScalar / 100.0f;
+                DecoratorDrawDistanceScalar = App.Settings.DecoratorDrawDistanceScalar / 100.0f;
                 IsFog = App.Settings.IsToggleFog;
                 IsWeather = App.Settings.IsToggleWeather;
                 IsRagdoll = App.Settings.IsToggleRagdoll;
@@ -459,6 +495,7 @@ namespace Ausar.Game
 
                 PatchApplyCustomFOVToVehicles(false);
                 PatchDynamicAspectRatio(false);
+                PatchNetworkIntegrity(false);
                 PatchToggleFrontend(true);
                 PatchToggleNavigationPoints(true);
                 PatchToggleThirdPersonCamera(false);
