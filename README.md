@@ -5,7 +5,7 @@
 
 <h1 align="center">Ausar</h1>
 
-<p align="center">A trainer for Halo 5: Forge for configuring graphics settings.</p>
+<p align="center">A trainer for Halo 5: Forge for configuring graphics and various gameplay features.</p>
 
 # Features
 - Adjustable FPS limit.

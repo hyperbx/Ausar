@@ -1,8 +1,10 @@
 ﻿using Ausar.Enums;
+using Ausar.Helpers;
 using Ausar.Interop;
 using Ausar.Logger;
-using Ausar.Services;
+using ProcessExtensions;
 using System.Diagnostics;
+using Vanara.PInvoke;
 
 namespace Ausar.Game
 {
@@ -11,11 +13,10 @@ namespace Ausar.Game
         private const float _defaultAspectRatio = 1.777777777777778f;
         private const float _defaultFOV = 78.0f;
 
-        private ProcessMemoryService _pms;
-
         private CancellationTokenSource _cancellationTokenSource = new();
 
         private bool _isDynamicAspectRatioInitialised = false;
+        public Process Process { get; set; }
 
         public bool IsResolutionScaleUpdated { get; set; } = false;
 
@@ -24,7 +25,7 @@ namespace Ausar.Game
         {
             get
             {
-                var fps = _pms.Read<int>(_pms.ASLR(0x143425078));
+                var fps = Process.Read<int>(Process.ToASLR(0x143425078));
 
                 if (fps <= 0)
                     return 60;
@@ -37,42 +38,42 @@ namespace Ausar.Game
                 var fps = Convert.ToInt32(MathF.Floor(1.0f / value * 1000000.0f));
 
                 for (int i = 0; i < 20; i += 10)
-                    _pms.WriteProtected(_pms.ASLR(0x143425078) + i, fps);
+                    Process.WriteProtected(Process.ToASLR(0x143425078) + i, fps);
             }
         }
 
         // Research from Exuberant
         public float FOV
         {
-            get => _pms.Read<float>(_pms.ASLR(0x14590E210));
+            get => Process.Read<float>(Process.ToASLR(0x14590E210));
 
             set
             {
                 if (value > _defaultFOV)
                 {
                     // Fix for high FOV being zoomed in on spawn.
-                    _pms.WriteProtected<byte>(_pms.ASLR(0x14079A162), 0x20);
+                    Process.WriteProtected<byte>(Process.ToASLR(0x14079A162), 0x20);
                 }
                 else
                 {
                     // Restore original operand.
-                    _pms.Restore(_pms.ASLR(0x14079A162));
+                    Process.RestoreMemory(Process.ToASLR(0x14079A162));
                 }
 
-                _pms.WriteProtected(_pms.ASLR(0x14590E210), value);
+                Process.WriteProtected(Process.ToASLR(0x14590E210), value);
             }
         }
 
         // Research from H5Tweak, ported from game version 1.114.4592.2
         public float AspectRatio
         {
-            get => _pms.Read<float>(_pms.ASLR(0x14333E458));
-            set => _pms.WriteProtected(_pms.ASLR(0x14333E458), value);
+            get => Process.Read<float>(Process.ToASLR(0x14333E458));
+            set => Process.WriteProtected(Process.ToASLR(0x14333E458), value);
         }
 
         public DisplayParameters DisplayParameters
         {
-            get => _pms.Read<DisplayParameters>(_pms.ASLR(0x144857610));
+            get => Process.Read<DisplayParameters>(Process.ToASLR(0x144857610));
 
             set
             {
@@ -81,93 +82,93 @@ namespace Ausar.Game
                     LoggerService.Utility("Refreshing graphics device...");
 #endif
 
-                _pms.WriteProtected(_pms.ASLR(0x144857610), value);
+                Process.WriteProtected(Process.ToASLR(0x144857610), value);
             }
         }
 
         // Research from Exuberant
         public float DrawDistanceScalar
         {
-            get => 1.0f * _pms.Read<float>(GetOffsetFromTLS(0x190) + 0x2BC);
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x190) + 0x2BC, 1.0f / value);
+            get => 1.0f * Process.Read<float>(GetOffsetFromTLS(0x190) + 0x2BC);
+            set => Process.WriteProtected(GetOffsetFromTLS(0x190) + 0x2BC, 1.0f / value);
         }
 
         // Research from Exuberant
         public float ObjectDetailScalar
         {
-            get => _pms.Read<float>(GetOffsetFromTLS(0x3050) + 0x7C);
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x3050) + 0x7C, value);
+            get => Process.Read<float>(GetOffsetFromTLS(0x3050) + 0x7C);
+            set => Process.WriteProtected(GetOffsetFromTLS(0x3050) + 0x7C, value);
         }
 
         // Research from Exuberant
         public float BSPGeometryDrawDistanceScalar
         {
-            get => _pms.Read<float>(GetOffsetFromTLS(0x3050) + 0x80);
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x3050) + 0x80, value);
+            get => Process.Read<float>(GetOffsetFromTLS(0x3050) + 0x80);
+            set => Process.WriteProtected(GetOffsetFromTLS(0x3050) + 0x80, value);
         }
 
         // Research from Exuberant
         public float EffectDrawDistanceScalar
         {
-            get => _pms.Read<float>(GetOffsetFromTLS(0x3050) + 0x38);
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x3050) + 0x38, value);
+            get => Process.Read<float>(GetOffsetFromTLS(0x3050) + 0x38);
+            set => Process.WriteProtected(GetOffsetFromTLS(0x3050) + 0x38, value);
         }
 
         // Research from Exuberant
         public float ParticleDrawDistanceScalar
         {
-            get => _pms.Read<float>(GetOffsetFromTLS(0x3050) + 0x44);
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x3050) + 0x44, value);
+            get => Process.Read<float>(GetOffsetFromTLS(0x3050) + 0x44);
+            set => Process.WriteProtected(GetOffsetFromTLS(0x3050) + 0x44, value);
         }
 
         // Research from Exuberant
         public float DecoratorDrawDistanceScalar
         {
-            get => _pms.Read<float>(GetOffsetFromTLS(0x3050) + 0x90);
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x3050) + 0x90, value);
+            get => Process.Read<float>(GetOffsetFromTLS(0x3050) + 0x90);
+            set => Process.WriteProtected(GetOffsetFromTLS(0x3050) + 0x90, value);
         }
 
         // Research from Exuberant
         public bool IsFog
         {
-            get => _pms.Read<bool>(GetOffsetFromTLS(0x2FE0));
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x2FE0), value);
+            get => Process.Read<bool>(GetOffsetFromTLS(0x2FE0));
+            set => Process.WriteProtected(GetOffsetFromTLS(0x2FE0), value);
         }
 
         // Research from Exuberant
         public bool IsWeather
         {
-            get => _pms.Read<bool>(GetOffsetFromTLS(0x2FE0) + 2);
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x2FE0) + 2, value);
+            get => Process.Read<bool>(GetOffsetFromTLS(0x2FE0) + 2);
+            set => Process.WriteProtected(GetOffsetFromTLS(0x2FE0) + 2, value);
         }
 
         // Research from Exuberant
         public bool IsRagdoll
         {
-            get => _pms.Read<int>(GetOffsetFromTLS(0x2FB0)) != -1;
-            set => _pms.WriteProtected(GetOffsetFromTLS(0x2FB0), value ? 0 : -1);
+            get => Process.Read<int>(GetOffsetFromTLS(0x2FB0)) != -1;
+            set => Process.WriteProtected(GetOffsetFromTLS(0x2FB0), value ? 0 : -1);
         }
 
         public bool IsSmallerCrosshairScale
         {
-            get => _pms.Read<bool>(_pms.ASLR(0x1463EFB35));
-            set => _pms.WriteProtected(_pms.ASLR(0x1463EFB35), value);
+            get => Process.Read<bool>(Process.ToASLR(0x1463EFB35));
+            set => Process.WriteProtected(Process.ToASLR(0x1463EFB35), value);
         }
 
         public bool IsWorldSpaceViewModel
         {
-            get => _pms.Read<bool>(_pms.ASLR(0x14485E554));
-            set => _pms.WriteProtected(_pms.ASLR(0x14485E554), value);
+            get => Process.Read<bool>(Process.ToASLR(0x14485E554));
+            set => Process.WriteProtected(Process.ToASLR(0x14485E554), value);
         }
 
         public string Map
         {
-            get => _pms.ReadStringNullTerminated(_pms.ASLR(0x145E58DC8));
+            get => Process.ReadStringNullTerminated(Process.ToASLR(0x145E58DC8));
         }
 
         public Memory(Process in_process)
         {
-            _pms = new(in_process);
+            Process = in_process;
 
             Task.Run(Update);
 
@@ -192,14 +193,14 @@ namespace Ausar.Game
 
         public nint GetThreadLocalStoragePointer()
         {
-            _pms.Process.Refresh();
+            Process.Refresh();
 
-            foreach (ProcessThread thread in _pms.Process.Threads)
+            foreach (ProcessThread thread in Process.Threads)
             {
                 if (thread.ThreadState != System.Diagnostics.ThreadState.Running)
                     continue;
 
-                var handle = Win32.OpenThread(Win32.THREAD_ALL_ACCESS, false, thread.Id);
+                var handle = Kernel32.OpenThread((int)Kernel32.ThreadAccess.THREAD_ALL_ACCESS, false, (uint)thread.Id);
 
                 if (handle == 0)
                 {
@@ -210,9 +211,9 @@ namespace Ausar.Game
                     continue;
                 }
 
-                var threadInfo = Win32.GetThreadInformation(handle);
+                var threadInfo = NtDllHelper.GetThreadInformation(handle);
 
-                Win32.CloseHandle(handle);
+                handle.Close();
 
                 if (threadInfo.TebBaseAddress == 0)
                 {
@@ -222,13 +223,11 @@ namespace Ausar.Game
 
                     continue;
                 }
-#if DEBUG
-                LoggerService.Utility($"Successfully retrieved info from thread {thread.Id}.");
-#endif
-                var tlsPtr = _pms.Read<nint>(threadInfo.TebBaseAddress + 0x58);
-                var tlsIndex = _pms.Read<int>(_pms.ASLR(0x145F1D56C));
 
-                return _pms.Read<nint>(tlsPtr + (tlsIndex * 8));
+                var tlsPtr = Process.Read<nint>(threadInfo.TebBaseAddress + 0x58);
+                var tlsIndex = Process.Read<int>(Process.ToASLR(0x145F1D56C));
+
+                return Process.Read<nint>(tlsPtr + (tlsIndex * 8));
             }
 #if DEBUG
             LoggerService.Error("Could not find main thread...");
@@ -238,21 +237,21 @@ namespace Ausar.Game
 
         public nint GetOffsetFromTLS(int in_offset)
         {
-            return _pms.Read<nint>(GetThreadLocalStoragePointer() + in_offset);
+            return Process.Read<nint>(GetThreadLocalStoragePointer() + in_offset);
         }
 
         // Research from Exuberant
-        public void PatchApplyCustomFOVToVehicles(bool in_isEnabled)
+        private void PatchApplyCustomFOVToVehicles(bool in_isEnabled)
         {
             if (in_isEnabled)
             {
                 // Force condition to disable FOV change when driving vehicles.
-                _pms.WriteProtected<byte>(_pms.ASLR(0x1406EE8EA), 0xEB, true);
+                Process.WriteProtected<byte>(Process.ToASLR(0x1406EE8EA), 0xEB, true);
             }
             else
             {
                 // Restore original opcode.
-                _pms.Restore(_pms.ASLR(0x1406EE8EA));
+                Process.RestoreMemory(Process.ToASLR(0x1406EE8EA));
             }
         }
 
@@ -326,7 +325,7 @@ namespace Ausar.Game
                 {
                     IsResolutionScaleUpdated = false;
                 }
-                else if (AspectRatio == newAspectRatio || User32.IsKeyDown(EKeys.LButton))
+                else if (AspectRatio == newAspectRatio || User32Helper.IsKeyDown(EKeys.LButton))
                 {
                     return;
                 }
@@ -345,8 +344,8 @@ namespace Ausar.Game
                 DisplayParameters = newDisplayParams;
 
                 // Disable full screen width/height override.
-                _pms.WriteNop(_pms.ASLR(0x14155B111), 3);
-                _pms.WriteNop(_pms.ASLR(0x14155B11E), 4);
+                Process.WriteNop(Process.ToASLR(0x14155B111), 3);
+                Process.WriteNop(Process.ToASLR(0x14155B11E), 4);
 
                 AspectRatio = newAspectRatio;
             }
@@ -367,51 +366,51 @@ namespace Ausar.Game
                 DisplayParameters = newDisplayParams;
 
                 // Restore full screen width/height override.
-                _pms.Restore(_pms.ASLR(0x14155B111));
-                _pms.Restore(_pms.ASLR(0x14155B11E));
+                Process.RestoreMemory(Process.ToASLR(0x14155B111));
+                Process.RestoreMemory(Process.ToASLR(0x14155B11E));
 
                 AspectRatio = _defaultAspectRatio;
             }
         }
 
-        public void PatchToggleFrontend(bool in_isEnabled)
+        private void PatchToggleFrontend(bool in_isEnabled)
         {
             // Patch instruction operand to force return value.
-            _pms.WriteProtected(_pms.ASLR(0x14136274D), Convert.ToByte(in_isEnabled));
+            Process.WriteProtected(Process.ToASLR(0x14136274D), Convert.ToByte(in_isEnabled));
         }
 
-        public void PatchToggleNavigationPoints(bool in_isEnabled)
+        private void PatchToggleNavigationPoints(bool in_isEnabled)
         {
             if (in_isEnabled)
             {
                 // Restore original opcode.
-                _pms.Restore(_pms.ASLR(0x141A589FE));
+                Process.RestoreMemory(Process.ToASLR(0x141A589FE));
 
                 // Restore original fixed scale.
-                _pms.Restore(_pms.ASLR(0x141A58A18));
+                Process.RestoreMemory(Process.ToASLR(0x141A58A18));
             }
             else
             {
                 // Force condition to use fixed scale.
-                _pms.WriteProtected<byte>(_pms.ASLR(0x141A589FE), 0xEB, true);
+                Process.WriteProtected<byte>(Process.ToASLR(0x141A589FE), 0xEB, true);
 
                 // Set fixed scale to zero.
-                _pms.WriteProtected(_pms.ASLR(0x141A58A18), 0.0f, true);
+                Process.WriteProtected(Process.ToASLR(0x141A58A18), 0.0f, true);
             }
         }
 
         // Research from Exuberant
-        public void PatchToggleThirdPersonCamera(bool in_isEnabled)
+        private void PatchToggleThirdPersonCamera(bool in_isEnabled)
         {
             if (in_isEnabled)
             {
                 // Remove condition to force third-person camera.
-                _pms.WriteNop(_pms.ASLR(0x1406E6138), 2);
+                Process.WriteNop(Process.ToASLR(0x1406E6138), 2);
             }
             else
             {
                 // Restore original instruction.
-                _pms.Restore(_pms.ASLR(0x1406E6138));
+                Process.RestoreMemory(Process.ToASLR(0x1406E6138));
             }
         }
 
