@@ -291,7 +291,7 @@ namespace Ausar.Game
             var crosshairMatrixHookAddr = Process.ToASLR(0x1417147C7);
             var crosshairScaleModeAddr  = Process.Alloc("CrosshairScaleMode", 1);
 
-            if (in_mode != ECrosshairScaleMode.Off)
+            if (in_mode != ECrosshairScaleMode.Default)
             {
                 Process.Write(crosshairScaleModeAddr, App.Settings.CrosshairScaleMode);
 
@@ -604,7 +604,7 @@ namespace Ausar.Game
                 _isUpdating = false;
 
                 PatchApplyCustomFOVToVehicles(false);
-                PatchCrosshairScaleMode(ECrosshairScaleMode.Off);
+                PatchCrosshairScaleMode(ECrosshairScaleMode.Default);
                 PatchDynamicAspectRatio(false);
                 PatchNetworkIntegrity(false);
                 PatchToggleFrontend(true);

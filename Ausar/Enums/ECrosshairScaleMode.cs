@@ -2,7 +2,7 @@
 {
     public enum ECrosshairScaleMode : byte
     {
-        Off,
+        Default,
         Scale,
         ScaleSmartLink
     }

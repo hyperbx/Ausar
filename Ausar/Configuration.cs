@@ -25,7 +25,7 @@ namespace Ausar
 
         public bool IsApplyCustomFOVToVehicles { get; set; } = false;
 
-        public byte CrosshairScaleMode { get; set; } = (byte)ECrosshairScaleMode.Off;
+        public byte CrosshairScaleMode { get; set; } = (byte)ECrosshairScaleMode.Default;
 
         public bool IsDynamicAspectRatio { get; set; } = false;
 

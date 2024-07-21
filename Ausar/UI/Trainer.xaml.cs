@@ -149,6 +149,7 @@ namespace Ausar
 
         private void OnProcessWait()
         {
+            App.Settings.IsCrosshairScaleModeAvailable = true;
             App.Settings.IsDynamicAspectRatioAvailable = true;
             App.Settings.ResolutionString = string.Empty;
 

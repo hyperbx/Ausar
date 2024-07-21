@@ -65,9 +65,9 @@
                                                 <ComboBox Name="CrosshairScaleModeField" HorizontalAlignment="Stretch"
                                                           IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsCrosshairScaleModeAvailable}"
                                                           SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=CrosshairScaleMode}">
-                                                    <ComboBoxItem Content="Off"/>
-                                                    <ComboBoxItem Content="Scale"/>
-                                                    <ComboBoxItem Content="Scale + Smart Link (recommended for high FOV)"/>
+                                                    <ComboBoxItem Content="Default"/>
+                                                    <ComboBoxItem Content="Scale to FOV"/>
+                                                    <ComboBoxItem Content="Scale to FOV with Smart Link Zoom Scalar"/>
                                                 </ComboBox>
                                             </StackPanel>
 
