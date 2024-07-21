@@ -9,7 +9,7 @@
 
 # Features
 - Adjustable FPS limit.
-- Adjustable field of view.
+- Adjustable field of view (with crosshair scaling).
 - Dynamic aspect ratio (adjusts for any non-16:9 resolution on the fly).
 - Draw distance scaling and performance options.
 - Various toggles for frontend and camera visuals.
