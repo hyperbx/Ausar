@@ -3,6 +3,7 @@ using Ausar.Game;
 using Ausar.Helpers;
 using Ausar.Logger.Handlers;
 using ModernWpf.Controls;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,6 +46,28 @@ namespace Ausar
             base.OnSourceInitialized(e);
 
             Task.Run(() => WaitForProcess(_cancellationTokenSource.Token));
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (!App.Settings.IsCrosshairScaleModeAvailable ||
+                !App.Settings.IsDynamicAspectRatioAvailable)
+            {
+                var result = MessageBox.Show
+                (
+                    "There are still patches installed that will not be uninstalled unless you return to the main menu first.\n\n" +
+                    "Exiting now may lead to unexpected behaviour if Ausar is launched again with this same instance of Halo 5: Forge.\n\n" +
+                    "Are you sure you want to quit?",
+                    "Ausar",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning
+                );
+
+                if (result == MessageBoxResult.No)
+                    e.Cancel = true;
+            }
+
+            base.OnClosing(e);
         }
 
         private void Status(string in_text, Brush in_colour = null)

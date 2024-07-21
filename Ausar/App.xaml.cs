@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Ausar.Extensions;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 

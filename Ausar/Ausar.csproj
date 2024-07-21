@@ -28,7 +28,7 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.0.0" />
     <PackageReference Include="ModernWpfUI" Version="0.9.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Process.Extensions" Version="1.0.13" />
+    <PackageReference Include="Process.Extensions" Version="1.0.32" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="Vanara.Core" Version="4.0.2" />
     <PackageReference Include="Vanara.PInvoke.Kernel32" Version="4.0.2" />

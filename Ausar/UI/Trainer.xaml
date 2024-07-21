@@ -58,10 +58,23 @@
 
                                 <Grid>
                                     <Expander Name="FOVExpander" Margin="1,4,0,10" Template="{StaticResource RevealExpander}">
-                                        <Grid Margin="23,65,0,10">
-                                            <CheckBox Margin="1,0,0,0" Content="Apply Custom FOV to Vehicles"
+                                        <StackPanel Margin="23,65,0,10">
+
+                                            <StackPanel Margin="0,5,0,20">
+                                                <au:HorizontalFieldLabel Caption="Crosshair Scale Mode" Description="Determines how the crosshair will scale to this value (only accessible from main menu)."/>
+                                                <ComboBox Name="CrosshairScaleModeField" HorizontalAlignment="Stretch"
+                                                          IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsCrosshairScaleModeAvailable}"
+                                                          SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=CrosshairScaleMode}">
+                                                    <ComboBoxItem Content="Off"/>
+                                                    <ComboBoxItem Content="Scale"/>
+                                                    <ComboBoxItem Content="Scale + Smart Link (recommended for high FOV)"/>
+                                                </ComboBox>
+                                            </StackPanel>
+
+                                            <au:DescribedCheckBox Content="Apply Custom FOV to Vehicles" Description="Determines whether to use this value for the vehicle camera."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToVehicles}"/>
-                                        </Grid>
+
+                                        </StackPanel>
                                     </Expander>
 
                                     <StackPanel Margin="24,0,0,20">
@@ -136,7 +149,7 @@
                                                           Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                         </StackPanel>
 
-                                        <StackPanel Margin="0,0,0,25">
+                                        <StackPanel Margin="0,0,0,20">
                                             <au:HorizontalFieldLabel Caption="Decorator Draw Distance Scalar" Description="The scalar for details like grass and debris."/>
                                             <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DecoratorDrawDistanceScalar}"
                                                           Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>

@@ -25,6 +25,8 @@ namespace Ausar
 
         public bool IsApplyCustomFOVToVehicles { get; set; } = false;
 
+        public byte CrosshairScaleMode { get; set; } = (byte)ECrosshairScaleMode.Off;
+
         public bool IsDynamicAspectRatio { get; set; } = false;
 
         public int ResolutionScale { get; set; } = 100;
@@ -119,6 +121,9 @@ namespace Ausar
         #endregion
 
         #region Frontend Config
+
+        [JsonIgnore]
+        public bool IsCrosshairScaleModeAvailable { get; set; } = true;
 
         [JsonIgnore]
         public bool IsDynamicAspectRatioAvailable { get; set; } = true;

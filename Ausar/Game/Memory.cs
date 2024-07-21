@@ -12,10 +12,15 @@ namespace Ausar.Game
     {
         private const float _defaultAspectRatio = 1.777777777777778f;
         private const float _defaultFOV = 78.0f;
+        private const float _maxCrosshairScale = 150.0f;
+        private const float _minCrosshairScale = 50.0f;
+        private const float _maxFOV = 150.0f;
+        private const float _minFOV = 60.0f;
 
-        private CancellationTokenSource _cancellationTokenSource = new();
+        private static bool _isScaleCrosshairToFOVInitialised = false;
+        private static bool _isDynamicAspectRatioInitialised = false;
 
-        private bool _isDynamicAspectRatioInitialised = false;
+        private bool _isUpdating = true;
 
         private int[] _simPresentIntervals = [60, 30, 120];
 
@@ -70,6 +75,11 @@ namespace Ausar.Game
 
                 Process.WriteProtected(Process.ToASLR(0x14590E210), value);
             }
+        }
+
+        public float FOVZoomScalar
+        {
+            get => Process.Read<float>(Process.ToASLR(0x144857858));
         }
 
         // Research from H5Tweak, ported from game version 1.114.4592.2
@@ -187,7 +197,7 @@ namespace Ausar.Game
 
         private void Update()
         {
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            while (_isUpdating)
             {
                 InstallPatches();
 
@@ -263,6 +273,107 @@ namespace Ausar.Game
             }
         }
 
+        private unsafe void PatchCrosshairScaleMode(ECrosshairScaleMode in_mode)
+        {
+            /* HACK: The mid-ASM hook is written in a function that is run
+                     so frequently in-game that it can cause a crash if the
+                     code is jumped to whilst still being written. */
+            if (Map.Contains("mainmenu"))
+            {
+                App.Settings.IsCrosshairScaleModeAvailable = true;
+            }
+            else
+            {
+                App.Settings.IsCrosshairScaleModeAvailable = false;
+                return;
+            }
+
+            var crosshairMatrixHookAddr = Process.ToASLR(0x1417147C7);
+            var crosshairScaleModeAddr  = Process.Alloc("CrosshairScaleMode", 1);
+
+            if (in_mode != ECrosshairScaleMode.Off)
+            {
+                Process.Write(crosshairScaleModeAddr, App.Settings.CrosshairScaleMode);
+
+                if (!_isScaleCrosshairToFOVInitialised)
+                {
+                    // Hook matrix code for crosshair.
+                    _isScaleCrosshairToFOVInitialised = Process.TryWriteAsmHook
+                    (
+                        $@"
+                            mov    r11d, 0x42700000                         ; Store minimum FOV value (60.0f) in R11D.
+                            movd   xmm0, r11d                               ; Copy R11D to XMM0.
+                            mov    r11d, 0x43160000                         ; Store maximum FOV value (150.0f) in R11D.
+                            movd   xmm1, r11d                               ; Copy R11D to XMM1.
+                            mov    r11, {(long)Process.ToASLR(0x14590E210)} ; Store address to FOV value in R11.
+                            movss  xmm2, dword ptr [r11]                    ; Copy FOV value to XMM2.
+                            mov    r11, {(long)Process.ToASLR(0x144857858)} ; Store address to FOV zoom scalar value in R11.
+                            movss  xmm3, dword ptr [r11]                    ; Copy FOV zoom scalar value to XMM3.
+                            
+                            mov    r11, {(long)crosshairScaleModeAddr}      ; Store address to crosshair scale mode in R11.
+                            cmp    byte ptr [r11], 2                        ; Compare crosshair scale mode with 2 (ECrosshairScaleMode.ScaleSmartLink).
+                            jne    ignoreZoom                               ; Jump if not 2; otherwise, apply FOV zoom scalar value.
+                            divss  xmm2, xmm3                               ; XMM2 = FOV / FOVZoomScalar
+
+                        ignoreZoom:
+                            subss  xmm2, xmm0                               ; XMM2 -= _minFOV
+                            subss  xmm1, xmm0                               ; XMM1 = _maxFOV - _minFOV
+                            divss  xmm2, xmm1                               ; XMM2 /= XMM1
+                                                                            
+                            mov    r11d, 0x42480000                         ; Store minimum crosshair scale value (50.0f) in R11D.
+                            movd   xmm3, r11d                               ; Copy R11D to XMM3.
+                            mov    r11d, 0x43160000                         ; Store maximum crosshair scale value (150.0f) in R11D.
+                            movd   xmm4, r11d                               ; Copy R11D to XMM4.
+                                                                            
+                            ; Linear interpolation routine.
+                            subss  xmm4, xmm3                               ; XMM4 = _maxCrosshairScale - _minCrosshairScale
+                            mulss  xmm2, xmm4                               ; XMM2 *= XMM4
+                            addss  xmm2, xmm3                               ; XMM2 += _minCrosshairScale
+                                                                            
+                            mov    r11d, 0x41F00000                         ; Store crosshair scale remainder value (30.0f) in R11D.
+                            movd   xmm5, r11d                               ; Copy R11D to XMM5.
+                            addss  xmm2, xmm5                               ; XMM2 += 30.0f
+
+                            ; Clamp routine.
+                            comiss xmm2, xmm3                               ; Compare result with _minCrosshairScale.
+                            jae    checkMax                                 ; Jump if result is greater than minimum.
+                            movaps xmm2, xmm3                               ; XMM2 = _minCrosshairScale
+
+                        checkMax:
+                            mov    r11d, 0x43160000                         ; Store maximum crosshair scale value (150.0f) in R11D.
+                            movd   xmm4, r11d                               ; Copy R11D to XMM4.
+                            comiss xmm2, xmm4                               ; Compare result with _maxCrosshairScale.
+                            jbe    end                                      ; Jump if result is less than maximum.
+                            movaps xmm2, xmm4                               ; XMM2 = _maxCrosshairScale
+
+                        end:
+                            mov    r11d, 0x42C80000                         ; Store percentage max value (100.0f) in R11D.
+                            movd   xmm3, r11d                               ; Copy R11D to XMM3.
+                            divss  xmm2, xmm3                               ; XMM2 /= 100.0f
+                            mov    r11d, 0x43B40000                         ; Store radius max value (360.0f) in R11D.
+                            movd   xmm4, r11d                               ; Copy R11D to XMM4.
+                            mulss  xmm2, xmm4                               ; XMM2 *= 360.0f
+                            movss  dword ptr [rax + 0x30], xmm2             ; Copy XMM2 to matrix at scale offset.
+
+                            ; Restore original code.
+                            movups xmm0, xmmword ptr [rax]
+                            lea    r11, qword ptr [rsp + 0xC0]
+                            movups xmm1, xmmword ptr [rax + 0x10]
+                        ",
+
+                        crosshairMatrixHookAddr
+                    );
+                }
+            }
+            else
+            {
+                Process.RemoveAsmHook(crosshairMatrixHookAddr);
+                Process.Free(crosshairScaleModeAddr);
+
+                _isScaleCrosshairToFOVInitialised = false;
+            }
+        }
+
         private void PatchDynamicAspectRatio(bool in_isEnabled)
         {
             var smartLinkAspectRatioHookAddr = Process.ToASLR(0x14162D4BC);
@@ -272,12 +383,12 @@ namespace Ausar.Game
                 if (!_isDynamicAspectRatioInitialised)
                 {
                     // Hook aspect ratio code for Smart Link.
-                    Process.WriteAsmHook
+                    _isDynamicAspectRatioInitialised = Process.TryWriteAsmHook
                     (
                         $@"
                             mov    r8, {Process.ToASLR(0x14333E458)} ; Store pointer to real aspect ratio in R8.
                             movss  xmm6, dword ptr [r8]              ; Store real aspect ratio in XMM6.
-                            mov    r9d, 0x3FE38E39                   ; Store 1.777777777777778f in R9D.
+                            mov    r9d, 0x3FE38E39                   ; Store default aspect ratio (1.777777777777778f) in R9D.
                             movd   xmm7, r9d                         ; Copy R9D to XMM7.
                             divss  xmm6, xmm7                        ; Divide real aspect ratio (XMM6) by default aspect ratio (XMM7).
                             mulss  xmm0, xmm6                        ; Multiply Smart Link aspect ratio (XMM0) by our divided value (XMM6).
@@ -291,13 +402,11 @@ namespace Ausar.Game
 
                         smartLinkAspectRatioHookAddr
                     );
-
-                    _isDynamicAspectRatioInitialised = true;
                 }
             }
             else
             {
-                Process.RestoreMemory(smartLinkAspectRatioHookAddr);
+                Process.RemoveAsmHook(smartLinkAspectRatioHookAddr);
 
                 _isDynamicAspectRatioInitialised = false;
             }
@@ -458,6 +567,7 @@ namespace Ausar.Game
                     return;
 
                 PatchApplyCustomFOVToVehicles(App.Settings.IsApplyCustomFOVToVehicles);
+                PatchCrosshairScaleMode((ECrosshairScaleMode)App.Settings.CrosshairScaleMode);
                 PatchDynamicAspectRatio(App.Settings.IsDynamicAspectRatio);
                 PatchNetworkIntegrity(FPS > 60);
                 PatchToggleFrontend(App.Settings.IsToggleFrontend);
@@ -491,9 +601,10 @@ namespace Ausar.Game
             {
                 /* FIXME: this will only work once, not a big
                           deal for its current use case though. */
-                _cancellationTokenSource.Cancel();
+                _isUpdating = false;
 
                 PatchApplyCustomFOVToVehicles(false);
+                PatchCrosshairScaleMode(ECrosshairScaleMode.Off);
                 PatchDynamicAspectRatio(false);
                 PatchNetworkIntegrity(false);
                 PatchToggleFrontend(true);
@@ -523,7 +634,7 @@ namespace Ausar.Game
 
         public void Dispose()
         {
-            _cancellationTokenSource.Cancel();
+            _isUpdating = false;
         }
     }
 }
