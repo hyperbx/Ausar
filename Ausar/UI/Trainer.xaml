@@ -197,9 +197,6 @@
                                 <au:DescribedCheckBox Content="Toggle Smaller Crosshair Scale" Description="Determines whether some crosshairs will use a smaller scale."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleSmallerCrosshairScale}"/>
 
-                                <au:DescribedCheckBox Content="Toggle Smart Link" Description="Determines whether the overlay is visible for some weapons whilst aiming down sights."
-                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleSmartLink}"/>
-
                                 <au:DescribedCheckBox Content="Toggle Third Person Camera" Description="Determines whether the camera will be positioned behind the player."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleThirdPersonCamera}"/>
 

@@ -114,8 +114,6 @@ namespace Ausar
 
         public bool IsToggleSmallerCrosshairScale { get; set; } = false;
 
-        public bool IsToggleSmartLink { get; set; } = true;
-
         public bool IsToggleThirdPersonCamera { get; set; } = false;
 
         public bool IsToggleWorldSpaceViewModel { get; set; } = false;
