@@ -61,7 +61,7 @@
                                         <StackPanel Margin="23,65,0,10">
 
                                             <StackPanel Margin="0,5,0,20">
-                                                <au:HorizontalFieldLabel Caption="Crosshair Scale Mode" Description="Determines how the crosshair will scale to this value (only accessible at the main menu)."/>
+                                                <au:HorizontalFieldLabel Caption="Crosshair Scale Mode" Description="Determines how the crosshair will scale to this value."/>
                                                 <ComboBox Name="CrosshairScaleModeField" HorizontalAlignment="Stretch"
                                                           IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsCrosshairScaleModeAvailable}"
                                                           SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=CrosshairScaleMode}">
