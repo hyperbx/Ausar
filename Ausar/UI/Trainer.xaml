@@ -29,183 +29,190 @@
         <TabControl>
             <TabItem Header="Patches">
                 <ScrollViewer>
-                    <StackPanel Margin="30,25,30,5">
-                        <GroupBox Header="General" Margin="0,0,0,10">
-                            <StackPanel>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,35,31,0">
+                            <TextBlock Foreground="Gray" Text="⚠ "/>
+                            <TextBlock FontStyle="Italic" Foreground="Gray" Text="- only available at the main menu."/>
+                        </StackPanel>
+                        
+                        <StackPanel Margin="30,25,30,5">
+                            <GroupBox Header="General" Margin="0,0,0,10">
+                                <StackPanel>
 
-                                <StackPanel Margin="0,0,0,20">
-                                    <Grid Margin="0,0,0,10">
-                                        <TextBlock Margin="2,0,0,0" Text="FPS"/>
+                                    <StackPanel Margin="0,0,0,20">
+                                        <Grid Margin="0,0,0,10">
+                                            <TextBlock Margin="2,0,0,0" Text="FPS"/>
 
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <TextBlock FontStyle="Italic" Foreground="Gray" Text="The desired frame rate limit (recommended "/>
-                                            
-                                            <TextBlock Margin="0,0,4,0">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock FontStyle="Italic" Foreground="Gray" Text="The desired frame rate limit (recommended "/>
+
+                                                <TextBlock Margin="0,0,4,0">
                                                 <Hyperlink Click="Patches_FPS_Hyperlink_Click">
                                                     <TextBlock Name="FPSHyperlinkHint" FontStyle="Italic">{0} FPS</TextBlock>
                                                 </Hyperlink>
                                             </TextBlock>
 
-                                            <TextBlock FontStyle="Italic" Foreground="Gray">
+                                                <TextBlock FontStyle="Italic" Foreground="Gray">
                                                 for your primary display) <Hyperlink Click="Patches_FPS_Experimental_Hyperlink_Click">(experimental)</Hyperlink>.
-                                            </TextBlock>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <ui:NumberBox Name="FPSNumberBox" Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FPS}"
+                                                      Minimum="30" Maximum="500" SpinButtonPlacementMode="Inline"/>
+                                    </StackPanel>
+
+                                    <Grid>
+                                        <Expander Name="FOVExpander" Margin="1,4,0,10" Template="{StaticResource RevealExpander}">
+                                            <StackPanel Margin="23,65,0,10">
+
+                                                <StackPanel Margin="0,5,0,20">
+                                                    <au:HorizontalFieldLabel Caption="Crosshair Scale Mode  ⚠" Description="Determines how the crosshair will scale to this value."/>
+                                                    <ComboBox Name="CrosshairScaleModeField" HorizontalAlignment="Stretch"
+                                                              IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsCrosshairScaleModeAvailable}"
+                                                              SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=CrosshairScaleMode}">
+                                                        <ComboBoxItem Content="Default"/>
+                                                        <ComboBoxItem Content="Scale to FOV"/>
+                                                        <ComboBoxItem Content="Scale to FOV with Smart Link Zoom Scalar"/>
+                                                    </ComboBox>
+                                                </StackPanel>
+
+                                                <au:DescribedCheckBox Content="Apply FOV to Vehicles" Description="Use this value for the vehicle camera."
+                                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToVehicles}"/>
+
+                                                <au:DescribedCheckBox Content="Apply FOV to View Model  ⚠" Description="Use this value for correcting the view model (recommended for high FOV)."
+                                                                      IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToViewModelAvailable}"
+                                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToViewModel}"/>
+
+                                            </StackPanel>
+                                        </Expander>
+
+                                        <StackPanel Margin="24,0,0,20">
+                                            <au:HorizontalFieldLabel Caption="FOV" Description="The desired field of view."/>
+                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FOV}"
+                                                          Minimum="60" Maximum="150" SpinButtonPlacementMode="Inline"/>
                                         </StackPanel>
                                     </Grid>
-                                    
-                                    <ui:NumberBox Name="FPSNumberBox" Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FPS}"
-                                                  Minimum="30" Maximum="500" SpinButtonPlacementMode="Inline"/>
-                                </StackPanel>
 
+                                    <Grid>
+                                        <Expander Name="ResolutionScaleExpander" Margin="1,10,0,8" Template="{StaticResource RevealExpander}"
+                                                  IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}">
+                                            <StackPanel Margin="24,25,0,20">
+                                                <au:HorizontalFieldLabel x:Name="ResolutionScaleFieldLabel" Caption="Resolution Scale"
+                                                                         Description="{Binding Source={x:Static local:App.Settings}, Path=ResolutionString}"/>
+                                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ResolutionScale}"
+                                                              Minimum="25" Maximum="200" SpinButtonPlacementMode="Inline" ValueChanged="Patches_ResolutionScale_ValueChanged"/>
+                                            </StackPanel>
+                                        </Expander>
+
+                                        <Grid VerticalAlignment="Top">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="215"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox Margin="24,0,0,0" Content="Dynamic Aspect Ratio  ⚠"
+                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatio}"
+                                                      IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}"/>
+
+                                            <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontStyle="Italic" Foreground="Gray">
+                                                Dynamically adjusts the aspect ratio to the current window size <Hyperlink Click="Patches_DynamicAspectRatio_Experimental_Hyperlink_Click">(experimental)</Hyperlink>.
+                                            </TextBlock>
+                                        </Grid>
+                                    </Grid>
+
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Performance" Margin="0,0,0,10">
                                 <Grid>
-                                    <Expander Name="FOVExpander" Margin="1,4,0,10" Template="{StaticResource RevealExpander}">
-                                        <StackPanel Margin="23,65,0,10">
+                                    <Expander Name="PerformanceExpander" Margin="0,40,0,20" Template="{StaticResource RevealExpanderNoInput}">
+                                        <StackPanel Margin="0,35,0,-10">
 
                                             <StackPanel Margin="0,5,0,20">
-                                                <au:HorizontalFieldLabel Caption="Crosshair Scale Mode" Description="Determines how the crosshair will scale to this value."/>
-                                                <ComboBox Name="CrosshairScaleModeField" HorizontalAlignment="Stretch"
-                                                          IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsCrosshairScaleModeAvailable}"
-                                                          SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=CrosshairScaleMode}">
-                                                    <ComboBoxItem Content="Default"/>
-                                                    <ComboBoxItem Content="Scale to FOV"/>
-                                                    <ComboBoxItem Content="Scale to FOV with Smart Link Zoom Scalar"/>
-                                                </ComboBox>
+                                                <au:HorizontalFieldLabel Caption="General Draw Distance Scalar" Description="The scalar for general draw distance."/>
+                                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DrawDistanceScalar}"
+                                                              Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
                                             </StackPanel>
 
-                                            <au:DescribedCheckBox Content="Apply FOV to Vehicles" Description="Use this value for the vehicle camera."
-                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToVehicles}"/>
+                                            <StackPanel Margin="0,0,0,20">
+                                                <au:HorizontalFieldLabel Caption="Object Detail Scalar" Description="The scalar for the distance LOD models should be swapped in at."/>
+                                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ObjectDetailScalar}"
+                                                              Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                                            </StackPanel>
 
-                                            <au:DescribedCheckBox Content="Apply FOV to View Model" Description="Use this value for correcting the view model (recommended for high FOV)."
-                                                      IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToViewModelAvailable}"
-                                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToViewModel}"/>
+                                            <StackPanel Margin="0,0,0,20">
+                                                <au:HorizontalFieldLabel Caption="BSP Geometry Draw Distance Scalar" Description="The scalar for the distance instanced geometry should unload at."/>
+                                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=BSPGeometryDrawDistanceScalar}"
+                                                              Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                                            </StackPanel>
+
+                                            <StackPanel Margin="0,0,0,20">
+                                                <au:HorizontalFieldLabel Caption="Effect Draw Distance Scalar" Description="The scalar for details like smoke and distant lighting."/>
+                                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=EffectDrawDistanceScalar}"
+                                                              Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                                            </StackPanel>
+
+                                            <StackPanel Margin="0,0,0,20">
+                                                <au:HorizontalFieldLabel Caption="Particle Draw Distance Scalar" Description="The scalar for details like sparks and flares."/>
+                                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ParticleDrawDistanceScalar}"
+                                                              Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                                            </StackPanel>
+
+                                            <StackPanel Margin="0,0,0,20">
+                                                <au:HorizontalFieldLabel Caption="Decorator Draw Distance Scalar" Description="The scalar for details like grass and debris."/>
+                                                <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DecoratorDrawDistanceScalar}"
+                                                              Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                                            </StackPanel>
+
+                                            <au:DescribedCheckBox Content="Toggle Fog" Description="Determines whether fog is rendered on certain maps."
+                                                                  IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleFog}"/>
+
+                                            <au:DescribedCheckBox Content="Toggle Weather" Description="Determines whether weather effects are rendered on certain maps."
+                                                                  IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleWeather}"/>
 
                                         </StackPanel>
                                     </Expander>
 
-                                    <StackPanel Margin="24,0,0,20">
-                                        <au:HorizontalFieldLabel Caption="FOV" Description="The desired field of view."/>
-                                        <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FOV}"
-                                                      Minimum="60" Maximum="150" SpinButtonPlacementMode="Inline"/>
+                                    <StackPanel Margin="0,0,0,10">
+                                        <au:HorizontalFieldLabel Caption="Preset" Description="The graphics preset tuned for the chosen performance setting."/>
+                                        <ComboBox Name="PerformancePresetField" HorizontalAlignment="Stretch" SelectionChanged="Patches_PerformancePreset_SelectionChanged"
+                                                  SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=PerformancePreset}">
+                                            <ComboBoxItem Content="High"/>
+                                            <ComboBoxItem Content="Medium"/>
+                                            <ComboBoxItem Content="Low"/>
+                                            <ComboBoxItem Content="Very Low"/>
+                                            <ComboBoxItem Content="Custom"/>
+                                        </ComboBox>
                                     </StackPanel>
                                 </Grid>
+                            </GroupBox>
 
-                                <Grid>
-                                    <Expander Name="ResolutionScaleExpander" Margin="1,10,0,8" Template="{StaticResource RevealExpander}"
-                                              IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}">
-                                        <StackPanel Margin="24,25,0,20">
-                                            <au:HorizontalFieldLabel x:Name="ResolutionScaleFieldLabel" Caption="Resolution Scale"
-                                                                     Description="{Binding Source={x:Static local:App.Settings}, Path=ResolutionString}"/>
-                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ResolutionScale}"
-                                                          Minimum="25" Maximum="200" SpinButtonPlacementMode="Inline" ValueChanged="Patches_ResolutionScale_ValueChanged"/>
-                                        </StackPanel>
-                                    </Expander>
+                            <GroupBox Header="Miscellaneous">
+                                <StackPanel>
 
-                                    <Grid VerticalAlignment="Top">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <CheckBox Margin="24,0,0,0" Content="Dynamic Aspect Ratio"
-                                                  IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatio}"
-                                                  IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}"/>
-
-                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontStyle="Italic" Foreground="Gray">
-                                            Dynamically adjusts the aspect ratio to the current window size <Hyperlink Click="Patches_DynamicAspectRatio_Experimental_Hyperlink_Click">(experimental)</Hyperlink>.
-                                        </TextBlock>
-                                    </Grid>
-                                </Grid>
-
-                            </StackPanel>
-                        </GroupBox>
-
-                        <GroupBox Header="Performance" Margin="0,0,0,10">
-                            <Grid>
-                                <Expander Name="PerformanceExpander" Margin="0,40,0,20" Template="{StaticResource RevealExpanderNoInput}">
-                                    <StackPanel Margin="0,35,0,-10">
-
-                                        <StackPanel Margin="0,5,0,20">
-                                            <au:HorizontalFieldLabel Caption="General Draw Distance Scalar" Description="The scalar for general draw distance."/>
-                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DrawDistanceScalar}"
-                                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
-                                        </StackPanel>
-
-                                        <StackPanel Margin="0,0,0,20">
-                                            <au:HorizontalFieldLabel Caption="Object Detail Scalar" Description="The scalar for the distance LOD models should be swapped in at."/>
-                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ObjectDetailScalar}"
-                                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
-                                        </StackPanel>
-
-                                        <StackPanel Margin="0,0,0,20">
-                                            <au:HorizontalFieldLabel Caption="BSP Geometry Draw Distance Scalar" Description="The scalar for the distance instanced geometry should unload at."/>
-                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=BSPGeometryDrawDistanceScalar}"
-                                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
-                                        </StackPanel>
-
-                                        <StackPanel Margin="0,0,0,20">
-                                            <au:HorizontalFieldLabel Caption="Effect Draw Distance Scalar" Description="The scalar for details like smoke and distant lighting."/>
-                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=EffectDrawDistanceScalar}"
-                                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
-                                        </StackPanel>
-
-                                        <StackPanel Margin="0,0,0,20">
-                                            <au:HorizontalFieldLabel Caption="Particle Draw Distance Scalar" Description="The scalar for details like sparks and flares."/>
-                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ParticleDrawDistanceScalar}"
-                                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
-                                        </StackPanel>
-
-                                        <StackPanel Margin="0,0,0,20">
-                                            <au:HorizontalFieldLabel Caption="Decorator Draw Distance Scalar" Description="The scalar for details like grass and debris."/>
-                                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DecoratorDrawDistanceScalar}"
-                                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
-                                        </StackPanel>
-
-                                        <au:DescribedCheckBox Content="Toggle Fog" Description="Determines whether fog is rendered on certain maps."
-                                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleFog}"/>
-
-                                        <au:DescribedCheckBox Content="Toggle Weather" Description="Determines whether weather effects are rendered on certain maps."
-                                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleWeather}"/>
-
-                                    </StackPanel>
-                                </Expander>
-
-                                <StackPanel Margin="0,0,0,10">
-                                    <au:HorizontalFieldLabel Caption="Preset" Description="The graphics preset tuned for the chosen performance setting."/>
-                                    <ComboBox Name="PerformancePresetField" HorizontalAlignment="Stretch" SelectionChanged="Patches_PerformancePreset_SelectionChanged"
-                                              SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=PerformancePreset}">
-                                        <ComboBoxItem Content="High"/>
-                                        <ComboBoxItem Content="Medium"/>
-                                        <ComboBoxItem Content="Low"/>
-                                        <ComboBoxItem Content="Very Low"/>
-                                        <ComboBoxItem Content="Custom"/>
-                                    </ComboBox>
-                                </StackPanel>
-                            </Grid>
-                        </GroupBox>
-
-                        <GroupBox Header="Miscellaneous">
-                            <StackPanel>
-
-                                <au:DescribedCheckBox Content="Toggle Frontend" Description="Determines whether the UI and HUD are drawn and interactive."
+                                    <au:DescribedCheckBox Content="Toggle Frontend" Description="Determines whether the UI and HUD are drawn and interactive."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleFrontend}"/>
 
-                                <au:DescribedCheckBox Content="Toggle Navigation Points" Description="Determines whether navigation points are drawn for weapons, players, etc."
+                                    <au:DescribedCheckBox Content="Toggle Navigation Points" Description="Determines whether navigation points are drawn for weapons, players, etc."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleNavigationPoints}"/>
 
-                                <au:DescribedCheckBox Content="Toggle Ragdolls" Description="Determines whether players will ragdoll or animate upon dying."
+                                    <au:DescribedCheckBox Content="Toggle Ragdolls" Description="Determines whether players will ragdoll or animate upon dying."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleRagdoll}"/>
 
-                                <au:DescribedCheckBox Content="Toggle Smaller Crosshair Scale" Description="Determines whether some crosshairs will use a smaller scale."
+                                    <au:DescribedCheckBox Content="Toggle Smaller Crosshair Scale" Description="Determines whether some crosshairs will use a smaller scale."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleSmallerCrosshairScale}"/>
 
-                                <au:DescribedCheckBox Content="Toggle Third Person Camera" Description="Determines whether the camera will be positioned behind the player."
+                                    <au:DescribedCheckBox Content="Toggle Third Person Camera" Description="Determines whether the camera will be positioned behind the player."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleThirdPersonCamera}"/>
 
-                                <au:DescribedCheckBox Content="Toggle World Space View Model" Description="Determines whether the player view model is rendered in world space."
+                                    <au:DescribedCheckBox Content="Toggle World Space View Model" Description="Determines whether the player view model is rendered in world space."
                                                       IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleWorldSpaceViewModel}"/>
 
-                            </StackPanel>
-                        </GroupBox>
-                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
             </TabItem>
 
