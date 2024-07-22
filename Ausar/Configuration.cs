@@ -25,6 +25,8 @@ namespace Ausar
 
         public bool IsApplyCustomFOVToVehicles { get; set; } = false;
 
+        public bool IsApplyCustomFOVToViewModel { get; set; } = false;
+
         public byte CrosshairScaleMode { get; set; } = (byte)ECrosshairScaleMode.Default;
 
         public bool IsDynamicAspectRatio { get; set; } = false;
@@ -124,6 +126,9 @@ namespace Ausar
 
         [JsonIgnore]
         public bool IsCrosshairScaleModeAvailable { get; set; } = true;
+
+        [JsonIgnore]
+        public bool IsApplyCustomFOVToViewModelAvailable { get; set; } = true;
 
         [JsonIgnore]
         public bool IsDynamicAspectRatioAvailable { get; set; } = true;

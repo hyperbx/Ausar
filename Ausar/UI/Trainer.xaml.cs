@@ -51,6 +51,7 @@ namespace Ausar
         protected override void OnClosing(CancelEventArgs e)
         {
             if (!App.Settings.IsCrosshairScaleModeAvailable ||
+                !App.Settings.IsApplyCustomFOVToViewModelAvailable ||
                 !App.Settings.IsDynamicAspectRatioAvailable)
             {
                 var result = MessageBox.Show
@@ -150,6 +151,7 @@ namespace Ausar
         private void OnProcessWait()
         {
             App.Settings.IsCrosshairScaleModeAvailable = true;
+            App.Settings.IsApplyCustomFOVToViewModelAvailable = true;
             App.Settings.IsDynamicAspectRatioAvailable = true;
             App.Settings.ResolutionString = string.Empty;
 

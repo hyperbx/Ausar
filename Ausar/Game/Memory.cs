@@ -18,6 +18,7 @@ namespace Ausar.Game
         private const float _minFOV = 60.0f;
 
         private static bool _isScaleCrosshairToFOVInitialised = false;
+        private static bool _isApplyCustomFOVToViewModelInitialised = false;
         private static bool _isDynamicAspectRatioInitialised = false;
 
         private bool _isUpdating = true;
@@ -273,6 +274,67 @@ namespace Ausar.Game
             }
         }
 
+        private void PatchApplyCustomFOVToViewModel(bool in_isEnabled)
+        {
+            /* HACK: The mid-ASM hook is written in a function that is run
+                     so frequently in-game that it can cause a crash if the
+                     code is jumped to whilst still being written. */
+            if (Map.Contains("mainmenu"))
+            {
+                App.Settings.IsApplyCustomFOVToViewModelAvailable = true;
+            }
+            else
+            {
+                App.Settings.IsApplyCustomFOVToViewModelAvailable = false;
+                return;
+            }
+
+            var viewModelFOVHookAddr = Process.ToASLR(0x1415BBD7B);
+
+            if (in_isEnabled)
+            {
+                if (!_isApplyCustomFOVToViewModelInitialised)
+                {
+                    _isApplyCustomFOVToViewModelInitialised = Process.TryWriteAsmHook
+                    (
+                        $@"
+                            movss xmm7, xmm0
+                            mov   eax, 0x43160000                          ; Store maximum FOV value (150.0f) in EAX.
+                            movd  xmm0, eax                                ; Copy EAX to XMM0.
+                            mov   rax, {(long)Process.ToASLR(0x14590E210)} ; Store address to FOV value in RAX.
+                            movss xmm1, dword ptr [rax]                    ; Copy FOV value to XMM1.
+                            movss xmm2, xmm0                               ; XMM2 = _maxFOV
+                            subss xmm2, xmm1                               ; XMM2 = _maxFOV - FOV
+                            mov   eax, 0x42700000                          ; Store minimum FOV value (60.0f) in EAX.
+                            movd  xmm1, eax                                ; Copy EAX to XMM1.
+                            subss xmm0, xmm1                               ; XMM0 = _maxFOV - _minFOV
+                            divss xmm2, xmm0                               ; XMM2 = (_maxFOV - FOV) / (_maxFOV - _minFOV)
+                            mov   eax, 0x3F800000                          ; Store maximum weapon FOV value (1.0f) in EAX.
+                            movd  xmm0, eax                                ; Copy EAX to XMM0.
+                            mov   eax, 0x3ECCCCCD                          ; Store minimum weapon FOV value (0.4f) in EAX.
+                            movd  xmm1, eax                                ; Copy EAX to XMM1.
+                            subss xmm0, xmm1                               ; XMM0 = _maxWeaponFOV - _minWeaponFOV
+                            mulss xmm2, xmm0                               ; XMM2 = (_maxFOV - FOV) / (_maxFOV - _minFOV) * (_maxWeaponFOV - _minWeaponFOV)
+                            addss xmm2, xmm1                               ; XMM2 += _minWeaponFOV
+                            mov   rax, {(long)Process.ToASLR(0x144857858)} ; Store address to FOV zoom scalar value in RAX.
+                            mulss xmm7, dword ptr [rax]                    ; Multiply FOV zoom scalar value with original weapon FOV value.
+                            mulss xmm2, xmm7                               ; Multiply both results to create the final weapon FOV value.
+                            mov   rax, {(long)Process.ToASLR(0x14485E558)} ; Store address to weapon FOV value in RAX.
+                            movss dword ptr [rax], xmm2                    ; Copy XMM2 to weapon FOV offset.
+                        ",
+
+                        viewModelFOVHookAddr
+                    );
+                }
+            }
+            else
+            {
+                Process.RemoveAsmHook(viewModelFOVHookAddr);
+
+                _isApplyCustomFOVToViewModelInitialised = false;
+            }
+        }
+
         private unsafe void PatchCrosshairScaleMode(ECrosshairScaleMode in_mode)
         {
             /* HACK: The mid-ASM hook is written in a function that is run
@@ -376,6 +438,29 @@ namespace Ausar.Game
 
         private void PatchDynamicAspectRatio(bool in_isEnabled)
         {
+            if (App.Settings.IsAllowDynamicAspectRatioInGame)
+            {
+                App.Settings.IsDynamicAspectRatioAvailable = true;
+            }
+            else
+            {
+                /* HACK: Don't update aspect ratio unless we're on the main
+                         menu where we can safely refresh the graphics device
+                         without destroying the fast HUD font renderer.
+
+                         The base game already forces you to quit out to the
+                         main menu just to change the resolution anyway. */
+                if (Map.Contains("mainmenu"))
+                {
+                    App.Settings.IsDynamicAspectRatioAvailable = true;
+                }
+                else
+                {
+                    App.Settings.IsDynamicAspectRatioAvailable = false;
+                    return;
+                }
+            }
+
             var smartLinkAspectRatioHookAddr = Process.ToASLR(0x14162D4BC);
 
             if (in_isEnabled)
@@ -403,39 +488,7 @@ namespace Ausar.Game
                         smartLinkAspectRatioHookAddr
                     );
                 }
-            }
-            else
-            {
-                Process.RemoveAsmHook(smartLinkAspectRatioHookAddr);
 
-                _isDynamicAspectRatioInitialised = false;
-            }
-
-            if (App.Settings.IsAllowDynamicAspectRatioInGame)
-            {
-                App.Settings.IsDynamicAspectRatioAvailable = true;
-            }
-            else
-            {
-                /* HACK: Don't update aspect ratio unless we're on the main
-                         menu where we can safely refresh the graphics device
-                         without destroying the fast HUD font renderer.
-
-                         The base game already forces you to quit out to the
-                         main menu just to change the resolution anyway. */
-                if (Map.Contains("mainmenu"))
-                {
-                    App.Settings.IsDynamicAspectRatioAvailable = true;
-                }
-                else
-                {
-                    App.Settings.IsDynamicAspectRatioAvailable = false;
-                    return;
-                }
-            }
-
-            if (in_isEnabled)
-            {
                 var newAspectRatio = (float)DisplayParameters.WindowWidth / (float)DisplayParameters.WindowHeight;
 
                 if (IsResolutionScaleUpdated)
@@ -468,6 +521,10 @@ namespace Ausar.Game
             }
             else
             {
+                Process.RemoveAsmHook(smartLinkAspectRatioHookAddr);
+
+                _isDynamicAspectRatioInitialised = false;
+
                 if (AspectRatio == _defaultAspectRatio)
                     return;
 
@@ -567,6 +624,7 @@ namespace Ausar.Game
                     return;
 
                 PatchApplyCustomFOVToVehicles(App.Settings.IsApplyCustomFOVToVehicles);
+                PatchApplyCustomFOVToViewModel(App.Settings.IsApplyCustomFOVToViewModel);
                 PatchCrosshairScaleMode((ECrosshairScaleMode)App.Settings.CrosshairScaleMode);
                 PatchDynamicAspectRatio(App.Settings.IsDynamicAspectRatio);
                 PatchNetworkIntegrity(FPS > 60);
@@ -604,6 +662,7 @@ namespace Ausar.Game
                 _isUpdating = false;
 
                 PatchApplyCustomFOVToVehicles(false);
+                PatchApplyCustomFOVToViewModel(false);
                 PatchCrosshairScaleMode(ECrosshairScaleMode.Default);
                 PatchDynamicAspectRatio(false);
                 PatchNetworkIntegrity(false);
