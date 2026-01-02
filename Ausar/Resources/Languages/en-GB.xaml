@@ -1,0 +1,160 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Common -->
+    <system:String x:Key="Common_Game">Halo 5: Forge</system:String>
+    <system:String x:Key="Common_OK">OK</system:String>
+    <system:String x:Key="Common_Yes">Yes</system:String>
+    <system:String x:Key="Common_No">No</system:String>
+    <system:String x:Key="Common_Version">Version {0}</system:String>
+    <system:String x:Key="Common_Unknown">Unknown</system:String>
+    
+    <!-- Status -->
+    <system:String x:Key="Status_WaitingForGame">Waiting for Halo 5: Forge...</system:String>
+    <system:String x:Key="Status_GameIsRunning">Halo 5: Forge is running (PID {0})...</system:String>
+    
+    <!-- Messages -->
+    <system:String x:Key="Message_Question_RestoreDefaults_Body">Are you sure you want to reset your configuration?</system:String>
+    <system:String x:Key="Message_Warning_ExitWithHooksInstalled_Body">
+        There are still patches installed that will not be uninstalled unless you return to the main menu first.\n\n
+        
+        Exiting now may lead to unexpected behaviour if Ausar is launched again with this same instance of Halo 5: Forge.\n\n
+        
+        Are you sure you want to quit?"
+    </system:String>
+    <system:String x:Key="Message_Error_Generic_Title">An error has occurred</system:String>
+    <system:String x:Key="Message_Error_GenericUnhandled_Title">An unhandled exception has occurred.\n\n{0}</system:String>
+    <system:String x:Key="Message_Error_GameVersionNotSupported_Body">The installed version of Halo 5: Forge is not supported.\n\nExpected: {0}\nReceived: {1}</system:String>
+    <system:String x:Key="Message_Error_FailedToLoadConfig_Body">Failed to load configuration.\n\n{0}\n\nThe configuration will now be reset.</system:String>
+    <system:String x:Key="Message_Error_FailedToResetConfig_Body">Failed to reset configuration.\n\n{0}</system:String>
+    
+    <!-- InfoControl -->
+    <system:String x:Key="InfoControl_ClickForMoreInfo">Click for more information.</system:String>
+    <system:String x:Key="InfoControl_ClickForMoreInfo_Experimental">This is experimental! Click for more information.</system:String>
+
+    <!-- Trainer -->
+    <system:String x:Key="Trainer_Graphics">Graphics</system:String>
+    <system:String x:Key="Trainer_Performance">Performance</system:String>
+    <system:String x:Key="Trainer_Tweaks">Tweaks</system:String>
+    <system:String x:Key="Trainer_Settings">Settings</system:String>
+    <system:String x:Key="Trainer_About">About</system:String>
+
+    <!-- Graphics -->
+    <system:String x:Key="Graphics_FPS">FPS</system:String>
+    <system:String x:Key="Graphics_FPS_Description">
+        This patch is experimental and may result in unexpected behaviour.\n\n
+        
+        Known issues:\n
+        • Certain weapons may fire at a faster rate at higher frame rates.\n
+        • Thruster Pack may boost with improper trajectory on slopes at higher frame rates.
+    </system:String>
+    <system:String x:Key="Graphics_FOV">FOV</system:String>
+    <system:String x:Key="Graphics_CrosshairScaleMode">Crosshair Scale Mode</system:String>
+    <system:String x:Key="Graphics_CrosshairScaleMode_Description">
+        Determines how the crosshair should scale to the custom FOV value.\n\n
+
+        Default: retains the original crosshair size.\n\n
+        
+        Scale to FOV: scales the crosshair smaller the higher the FOV is and vice-versa.\n\n
+        
+        Scale to FOV w/ Smart Link Zoom Scalar: same as the former option, but increases the crosshair scale when aiming down sights, depending on how much the FOV increases whilst doing so.\n\n
+
+        This patch can only be changed at the main menu.
+    </system:String>
+    <system:String x:Key="Graphics_CrosshairScaleMode_Default"                          >Default</system:String>
+    <system:String x:Key="Graphics_CrosshairScaleMode_ScaleToFOV"                       >Scale to FOV</system:String>
+    <system:String x:Key="Graphics_CrosshairScaleMode_ScaleToFOVWithSmartLinkZoomScalar">Scale to FOV w/ Smart Link Zoom Scalar</system:String>
+    <system:String x:Key="Graphics_ApplyFOVToVehicles">Apply FOV to Vehicles</system:String>
+    <system:String x:Key="Graphics_ApplyFOVToVehicles_Description">Determines whether to use the custom FOV value for the vehicle camera.</system:String>
+    <system:String x:Key="Graphics_ApplyFOVToViewModels">Apply FOV to View Models</system:String>
+    <system:String x:Key="Graphics_ApplyFOVToViewModels_Description">
+        Determines whether to use the custom FOV value for correcting the player view model.\n\n
+                                    
+        This will prevent the weapon on screen appearing either too close or too far away from the camera. This is highly recommended for high FOV.\n\n
+                                    
+        This patch can only be changed at the main menu.
+    </system:String>
+    <system:String x:Key="Graphics_DynamicAspectRatio">Dynamic Aspect Ratio</system:String>
+    <system:String x:Key="Graphics_DynamicAspectRatio_Description">
+        Determines whether to dynamically adjust the aspect ratio to the current window size.\n\n
+                                
+        A non-16:9 display is not required in order to use this patch, and can be used only to change the internal resolution (if the in-game options don't suffice).\n\n
+                                
+        This patch can only be changed at the main menu.
+    </system:String>
+    <system:String x:Key="Graphics_DynamicAspectRatio_Warning">
+        This patch is experimental and may cause instability.\n\n
+                                
+        Known issues;\n
+        • Resizing the game window too many times will cause UI elements and the font renderer to start artefacting until they eventually disappear.\n
+        • UI elements rendered in 3D space (such as navigation points) are still drawn at 16:9 and may appear stretched at non-16:9 resolutions.\n
+        • Ludicrously wide aspect ratios may have graphical errors with certain buffers being drawn at the incorrect offset.
+    </system:String>
+    <system:String x:Key="Graphics_ResolutionScale">Resolution Scale</system:String>
+
+    <!-- Performance -->
+    <system:String x:Key="Performance_Preset">Preset</system:String>
+    <system:String x:Key="Performance_Preset_Description">
+        Determines the graphics quality settings tuned for the selected performance preset.\n\n
+                                
+        By default, this game uses equivalent settings to the Xbox One port for the PC configuration, this is known as the "Low" preset.\n\n
+                                
+        Higher presets will demand more powerful hardware for increased draw distance and visual effects.\n\n
+                                
+        Select "Custom", if you wish to configure these settings manually.
+    </system:String>
+    <system:String x:Key="Performance_Preset_High">High</system:String>
+    <system:String x:Key="Performance_Preset_Medium">Medium</system:String>
+    <system:String x:Key="Performance_Preset_Low">Low</system:String>
+    <system:String x:Key="Performance_Preset_VeryLow">Very Low</system:String>
+    <system:String x:Key="Performance_Preset_Custom">Custom</system:String>
+    <system:String x:Key="Performance_GeneralDrawDistanceScalar">General Draw Distance Scalar</system:String>
+    <system:String x:Key="Performance_GeneralDrawDistanceScalar_Description">The scalar for general draw distance.</system:String>
+    <system:String x:Key="Performance_ObjectDetailScalar">Object Detail Scalar</system:String>
+    <system:String x:Key="Performance_ObjectDetailScalar_Description">The scalar for the distance LOD models should be swapped in at.</system:String>
+    <system:String x:Key="Performance_BSPGeometryDrawDistanceScalar">BSP Geometry Draw Distance Scalar</system:String>
+    <system:String x:Key="Performance_BSPGeometryDrawDistanceScalar_Description">The scalar for the distance instanced geometry should unload at.</system:String>
+    <system:String x:Key="Performance_EffectDrawDistanceScalar">Effect Draw Distance Scalar</system:String>
+    <system:String x:Key="Performance_EffectDrawDistanceScalar_Description">The scalar for details like smoke and distant lighting.</system:String>
+    <system:String x:Key="Performance_ParticleDrawDistanceScalar">Particle Draw Distance Scalar</system:String>
+    <system:String x:Key="Performance_ParticleDrawDistanceScalar_Description">The scalar for details like sparks and flares.</system:String>
+    <system:String x:Key="Performance_DecoratorDrawDistanceScalar">Decorator Draw Distance Scalar</system:String>
+    <system:String x:Key="Performance_DecoratorDrawDistanceScalar_Description">The scalar for details like grass and debris.</system:String>
+    <system:String x:Key="Performance_DrawFog">Draw Fog</system:String>
+    <system:String x:Key="Performance_DrawFog_Description">Determines whether fog is rendered on certain maps.</system:String>
+    <system:String x:Key="Performance_DrawWeather">Draw Weather</system:String>
+    <system:String x:Key="Performance_DrawWeather_Description">Determines whether weather effects are rendered on certain maps.</system:String>
+
+    <!-- Tweaks -->
+    <system:String x:Key="Tweaks_DisplayFrontend">Display Frontend</system:String>
+    <system:String x:Key="Tweaks_DisplayFrontend_Description">Determines whether the UI and HUD are drawn and interactive.</system:String>
+    <system:String x:Key="Tweaks_DisplayNavigationPoints">Display Navigation Points</system:String>
+    <system:String x:Key="Tweaks_DisplayNavigationPoints_Description">Determines whether navigation points are drawn for weapons, players, etc.</system:String>
+    <system:String x:Key="Tweaks_UseRagdolls">Use Ragdolls</system:String>
+    <system:String x:Key="Tweaks_UseRagdolls_Description">Determines whether players will ragdoll or animate upon dying.</system:String>
+    <system:String x:Key="Tweaks_UseSmallerCrosshairScale">Use Smaller Crosshair Scale</system:String>
+    <system:String x:Key="Tweaks_UseSmallerCrosshairScale_Description">Determines whether some crosshairs will use a smaller scale.</system:String>
+    <system:String x:Key="Tweaks_UseThirdPersonCamera">Use Third Person Camera</system:String>
+    <system:String x:Key="Tweaks_UseThirdPersonCamera_Description">Determines whether the camera will be positioned behind the player.</system:String>
+    <system:String x:Key="Tweaks_UseWorldSpaceViewModel">Use World Space View Model</system:String>
+    <system:String x:Key="Tweaks_UseWorldSpaceViewModel_Description">Determines whether the player view model is rendered in world space.</system:String>
+
+    <!-- Settings -->
+    <system:String x:Key="Settings_General">General</system:String>
+    <system:String x:Key="Settings_General_Language">Language</system:String>
+    <system:String x:Key="Settings_General_PatchRate">Patch Rate</system:String>
+    <system:String x:Key="Settings_General_PatchRate_Description">The rate at which patches will be applied to the game (in milliseconds).</system:String>
+    <system:String x:Key="Settings_General_UninstallPatchesOnExit">Uninstall Patches on Exit</system:String>
+    <system:String x:Key="Settings_General_UninstallPatchesOnExit_Description">Determines whether patches will remain installed upon closing Ausar.</system:String>
+    <system:String x:Key="Settings_General_RestoreDefaults">Restore Defaults</system:String>
+    <system:String x:Key="Settings_General_RestoreDefaults_Description">Clears the current configuration and restores default values for everything.</system:String>
+    <system:String x:Key="Settings_Experimental">Experimental</system:String>
+    <system:String x:Key="Settings_Experimental_AllowDynamicAspectRatioInGame">Allow Dynamic Aspect Ratio In-Game</system:String>
+    <system:String x:Key="Settings_Experimental_AllowDynamicAspectRatioInGame_Description">Determines whether the resolution can be changed whilst in a game.</system:String>
+    
+    <!-- About -->
+    <system:String x:Key="About_Game_UWPVersion">UWP Version:</system:String>
+    <system:String x:Key="About_Credits">Credits</system:String>
+
+</ResourceDictionary>

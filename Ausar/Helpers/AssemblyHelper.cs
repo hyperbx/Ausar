@@ -2,7 +2,7 @@
 
 namespace Ausar.Helpers
 {
-    internal class AssemblyHelper
+    public class AssemblyHelper
     {
         public static string GetInformationalVersion()
         {

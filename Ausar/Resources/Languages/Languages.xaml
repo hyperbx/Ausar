@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Ausar">
+    
+    <!--
+        Language Resources
+    
+        To add a language, add a new entry to the 'local:Languages' section using the following template;
+        
+        <local:Language FileName="en-GB" Name="English (United Kingdom)"/>
+    
+        Ensure that your language's XAML resource is named after the culture code for your region
+        and correctly describes the localisation you have provided. For a list of officially supported
+        culture codes, visit the following link;
+    
+        https://azuliadesigns.com/c-sharp-tutorials/list-net-culture-country-codes
+    
+        Set the FileName key to the name of the XAML file you created containing your language's text.
+    
+        Set the Name key to the localised name of your language and describe either the region or the
+        English version of the language next to it in brackets.
+    -->
+
+    <local:Languages x:Key="Languages">
+        <local:Language FileName="en-GB" Name="English (United Kingdom)"/>
+    </local:Languages>
+    
+</ResourceDictionary>

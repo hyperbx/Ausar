@@ -4,12 +4,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:au="clr-namespace:Ausar.UI.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="400">
 
-    <Grid Margin="0,0,0,5">
+    <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
         <CheckBox Content="{Binding ElementName=Root, Path=Content}" IsChecked="{Binding ElementName=Root, Path=IsChecked}"/>
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" FontStyle="Italic" Foreground="Gray" Margin="0,0,2,0" Text="{Binding ElementName=Root, Path=Description}"/>
-    </Grid>
+        <au:InfoControl Title="{Binding ElementName=Root, Path=Content}" Description="{Binding ElementName=Root, Path=Description}"/>
+    </StackPanel>
 
 </UserControl>

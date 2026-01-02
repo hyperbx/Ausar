@@ -1,4 +1,5 @@
 ﻿using Ausar.Extensions;
+using Ausar.Services;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -11,7 +12,11 @@ namespace Ausar
 
         public static Configuration Settings { get; private set; } = new Configuration().Import();
 
-        public static Game.Memory GameMemory { get; set; }
+        public static Languages? SupportedLanguages { get; set; }
+
+        public static Language? CurrentLanguage { get; set; }
+
+        public static Game.Memory? GameMemory { get; set; }
 
         public static bool IsFrontendDebug { get; } = false;
 
@@ -20,13 +25,19 @@ namespace Ausar
 #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
             {
-                MessageBox.Show($"An unhandled exception has occurred.\n\n" +
-                    $"{(e.ExceptionObject as Exception).ToString().Truncate(500, true)}",
-                    "Ausar", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show
+                (
+                    LocaleService.Localise("Message_Error_GenericUnhandled_Title", (e.ExceptionObject as Exception).ToString().Truncate(500, true)),
+                    "Ausar",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
 
                 Environment.Exit(-1);
             };
 #endif
+
+            Language.LoadResources();
 
             base.OnStartup(e);
         }

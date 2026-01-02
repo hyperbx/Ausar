@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <Version>1.2.0</Version>
-    <InformationalVersion>1.2.0</InformationalVersion>
+    <Version>1.3.0</Version>
+    <InformationalVersion>1.3.0</InformationalVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>True</UseWPF>
@@ -12,10 +12,12 @@
     <ApplicationIcon>Resources\Icons\Icon.ico</ApplicationIcon>
     <UseWindowsForms>False</UseWindowsForms>
     <IncludeAllContentForSelfExtract>True</IncludeAllContentForSelfExtract>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="FodyWeavers.xml" />
+    <None Remove="Resources\Fonts\Material.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +39,10 @@
 
   <ItemGroup>
     <Folder Include="Resources\Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Fonts\Material.ttf" />
   </ItemGroup>
 
   <ItemGroup>

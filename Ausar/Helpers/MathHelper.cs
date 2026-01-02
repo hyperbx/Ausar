@@ -1,6 +1,6 @@
 ﻿namespace Ausar.Helpers
 {
-    internal class MathHelper
+    public class MathHelper
     {
         public static float Lerp(float in_start, float in_end, float in_time)
         {

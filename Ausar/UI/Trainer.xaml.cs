@@ -1,7 +1,7 @@
-﻿using Ausar.Enums;
-using Ausar.Game;
+﻿using Ausar.Game;
 using Ausar.Helpers;
 using Ausar.Logger.Handlers;
+using Ausar.Services;
 using ModernWpf.Controls;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -17,28 +17,13 @@ namespace Ausar
     {
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        private DispatcherTimer _resolutionScaleUpdateTimer;
-
         public Trainer()
         {
             InitializeComponent();
 
-            FPSHyperlinkHint.Text = string.Format(FPSHyperlinkHint.Text, User32Helper.GetRefreshRate());
-
-            _resolutionScaleUpdateTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(1000) };
-            _resolutionScaleUpdateTimer.Tick += (s, e) =>
-            {
-                _resolutionScaleUpdateTimer.Stop();
-
-                if (App.GameMemory == null)
-                    return;
-
-                App.GameMemory.IsResolutionScaleUpdated = true;
-            };
-
             DebugLog.ItemsSource = FrontendLogger.Logs;
 
-            AusarVersionText.Text = $"Version {AssemblyHelper.GetInformationalVersion()}";
+            AusarVersionText.Text = LocaleService.Localise("Common_Version", AssemblyHelper.GetInformationalVersion());
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -56,9 +41,7 @@ namespace Ausar
             {
                 var result = MessageBox.Show
                 (
-                    "There are still patches installed that will not be uninstalled unless you return to the main menu first.\n\n" +
-                    "Exiting now may lead to unexpected behaviour if Ausar is launched again with this same instance of Halo 5: Forge.\n\n" +
-                    "Are you sure you want to quit?",
+                    LocaleService.Localise("Message_Warning_ExitWithHooksInstalled_Body"),
                     "Ausar",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning
@@ -102,8 +85,8 @@ namespace Ausar
         {
 #if !DEBUG
             try
-            {
 #endif
+            {
                 var isPatchingEnabled = App.IsFrontendDebug
                     ? DisableRuntimePatcherCheckBox.IsChecked == false
                     : true;
@@ -115,7 +98,7 @@ namespace Ausar
                         var version = Information.GetVersionString(in_process);
 
                         if (version != Information.ExpectedVersion)
-                            throw new NotSupportedException($"The installed version of Halo 5: Forge is not supported.\n\nExpected: {Information.ExpectedVersion}\nReceived: {version}");
+                            throw new NotSupportedException(LocaleService.Localise("Message_Error_GameVersionNotSupported_Body", Information.ExpectedVersion, version));
 
                         HaloUWPVersionText.Text = version;
 
@@ -127,18 +110,18 @@ namespace Ausar
                     OnProcessWait();
                 }
 
-                Status($"Halo 5: Forge is running (PID {in_process.Id})...", Brushes.DarkGreen);
-#if !DEBUG
+                Status(LocaleService.Localise("Status_GameIsRunning", in_process.Id), Brushes.DarkGreen);
             }
+#if !DEBUG
             catch (Exception out_ex)
             {
                 _cancellationTokenSource.Cancel();
 
                 var dialog = new ContentDialog()
                 {
-                    Title = "An exception has occurred",
+                    Title = LocaleService.Localise("Message_Error_Generic_Title"),
                     Content = out_ex.Message,
-                    PrimaryButtonText = "OK"
+                    PrimaryButtonText = LocaleService.Localise("Common_OK")
                 };
                 
                 await dialog.ShowAsync();
@@ -158,76 +141,22 @@ namespace Ausar
             App.GameMemory?.Dispose();
             App.GameMemory = null;
 
-            Status("Waiting for Halo 5: Forge...", Brushes.DarkRed);
+            Status(LocaleService.Localise("Status_WaitingForGame"), Brushes.DarkRed);
         }
 
-        private void Patches_FPS_Hyperlink_Click(object sender, RoutedEventArgs e)
+        private void Settings_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.Settings.FPS = User32Helper.GetRefreshRate();
-        }
-
-        private void Patches_FPS_Experimental_Hyperlink_Click(object sender, RoutedEventArgs e)
-        {
-            var message =
-            """
-            This feature is experimental and may result in unexpected behaviour.
-
-            Known issues;
-            • Certain weapons may fire at a faster rate at higher frame rates.
-            • Thruster Pack may boost with improper trajectory on slopes at higher frame rates.
-            """;
-
-            new ContentDialog()
-            {
-                Title = "FPS",
-                Content = message,
-                PrimaryButtonText = "OK"
-            }
-            .ShowAsync();
-        }
-
-        private void Patches_DynamicAspectRatio_Experimental_Hyperlink_Click(object sender, RoutedEventArgs e)
-        {
-            var message =
-            """
-            This feature is experimental and may cause instability if used improperly.
-
-            Ausar must always be running to update the game's aspect ratio at runtime, and you must be at the main menu in order for the changes to apply.
-
-            Known issues;
-            • Resizing the game window too many times will cause UI elements and the font renderer to start artefacting until they eventually disappear (which is why being at the main menu is a requirement for now).
-            • UI elements rendered in 3D space (such as navigation points) are still drawn at 16:9 and may appear stretched at non-16:9 resolutions.
-            • Ludicrously wide aspect ratios may have graphical errors with certain buffers being drawn at the incorrect offset.
-            """;
-
-            new ContentDialog()
-            {
-                Title = "Dynamic Aspect Ratio",
-                Content = message,
-                PrimaryButtonText = "OK"
-            }
-            .ShowAsync();
-        }
-
-        private void Patches_ResolutionScale_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-        {
-            _resolutionScaleUpdateTimer?.Stop();
-            _resolutionScaleUpdateTimer?.Start();
-        }
-
-        private void Patches_PerformancePreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            PerformanceExpander.IsExpanded = (EPerformancePreset)PerformancePresetField.SelectedIndex == EPerformancePreset.Custom;
+            Ausar.Language.UpdateResources();
         }
 
         private async void Settings_ClearSettings_Click(object sender, RoutedEventArgs e)
         {
             var result = await new ContentDialog()
             {
-                Title = "Restore Defaults",
-                Content = "Are you sure you want to reset your configuration?",
-                PrimaryButtonText = "Yes",
-                SecondaryButtonText = "No"
+                Title = LocaleService.Localise("Settings_General_RestoreDefaults"),
+                Content = LocaleService.Localise("Message_Question_RestoreDefaults_Body"),
+                PrimaryButtonText = LocaleService.Localise("Common_Yes"),
+                SecondaryButtonText = LocaleService.Localise("Common_No")
             }
             .ShowAsync();
 
@@ -236,18 +165,18 @@ namespace Ausar
 
 #if !DEBUG
             try
-            {
 #endif
+            {
                 App.Settings.Reset();
-#if !DEBUG
             }
+#if !DEBUG
             catch (Exception out_ex)
             {
                 await new ContentDialog()
                 {
-                    Title = "An exception has occurred",
-                    Content = $"Failed to reset configuration.\n\n{out_ex}",
-                    PrimaryButtonText = "OK"
+                    Title = LocaleService.Localise("Message_Error_Generic_Title"),
+                    Content = LocaleService.Localise("Message_Error_FailedToResetConfig_Body", out_ex),
+                    PrimaryButtonText = LocaleService.Localise("Common_OK")
                 }
                 .ShowAsync();
             }

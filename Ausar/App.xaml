@@ -11,14 +11,27 @@
     <Application.Resources>
         <ResourceDictionary>
 
+            <!-- Set up themes. -->
             <ResourceDictionary.MergedDictionaries>
+
+                <!-- Load language data. -->
+                <ResourceDictionary Source="Resources/Languages/Languages.xaml"/>
+                <ResourceDictionary Source="Resources/Languages/en-GB.xaml"/>
+
+                <!-- Load theme data for style overrides. -->
                 <ui:ThemeResources RequestedTheme="Dark"/>
                 <ui:XamlControlsResources/>
+                
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- Set up fonts. -->
+            <FontFamily x:Key="MaterialIcons">pack://application:,,,/Resources/Fonts/#Material Icons</FontFamily>
+
+            <!-- Set up converters. -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <auConverters:MultiplyConverter x:Key="MultiplyConverter"/>
 
+            <!-- Set up geometry. -->
             <Geometry o:Freeze="True" x:Key="DownGeometry">M512 801.6896L5.12 282.0096l58.1632-59.5968L512 682.3936l448.7168-460.0832 58.1632 59.5968-506.88 519.7824z</Geometry>
             <Geometry o:Freeze="True" x:Key="UpGeometry">M50.000001,0 L100,51.262779 94.262627,57.141584 50.000001,11.767713 5.7373757,57.151686 0,51.27288 z</Geometry>
 
@@ -33,6 +46,7 @@
                 </Setter>
             </Style>
 
+            <!-- Set up custom styles. -->
             <!-- https://github.com/HandyOrg/HandyControl/blob/3d7595692c2249c1b803793363d262a37b94d072/src/Shared/HandyControl_Shared/Themes/Styles/ToggleButton.xaml#L316 -->
             <Style x:Key="ToggleButtonCustom" BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />

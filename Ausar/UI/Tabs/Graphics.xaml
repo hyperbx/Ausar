@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="Ausar.UI.Tabs.Graphics"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Ausar"
+             xmlns:au="clr-namespace:Ausar.UI.Controls"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignHeight="595"
+             d:DesignWidth="474">
+
+    <Grid Margin="25,20,25,0">
+        <StackPanel>
+
+            <!-- FPS -->
+            <StackPanel Margin="0,0,0,20">
+                <au:LabelRow Text="{DynamicResource Graphics_FPS}">
+                    <au:InfoControl Margin="5,0,0,0" IsWarning="True" Title="{DynamicResource Graphics_FPS}" Description="{DynamicResource Graphics_FPS_Description}"/>
+                </au:LabelRow>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="68"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <ui:NumberBox Name="FPSNumberBox" Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FPS}"
+                                  Minimum="30" Maximum="1000" SpinButtonPlacementMode="Inline"/>
+                    <Button Grid.Column="1" Content="Native" Margin="-1,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Click="FPS_Native_Click" BorderBrush="#999999"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- FOV -->
+            <Grid>
+                <Expander Name="FOVExpander" Margin="1,4,0,10" Template="{StaticResource RevealExpander}" IsExpanded="True">
+                    <StackPanel Margin="23,60,0,10">
+                        <StackPanel Margin="0,5,0,15">
+                            <au:LabelRow Text="{DynamicResource Graphics_CrosshairScaleMode}">
+                                <au:InfoControl Title="{DynamicResource Graphics_CrosshairScaleMode}" Description="{DynamicResource Graphics_CrosshairScaleMode_Description}"/>
+                            </au:LabelRow>
+
+                            <ComboBox Name="CrosshairScaleModeField" HorizontalAlignment="Stretch"
+                                      IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsCrosshairScaleModeAvailable}"
+                                      SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=CrosshairScaleMode}">
+                                <ComboBoxItem Content="{DynamicResource Graphics_CrosshairScaleMode_Default}"/>
+                                <ComboBoxItem Content="{DynamicResource Graphics_CrosshairScaleMode_ScaleToFOV}"/>
+                                <ComboBoxItem Content="{DynamicResource Graphics_CrosshairScaleMode_ScaleToFOVWithSmartLinkZoomScalar}"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                            <CheckBox Content="{DynamicResource Graphics_ApplyFOVToVehicles}" IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToVehicles}"/>
+                            <au:InfoControl Title="{DynamicResource Graphics_ApplyFOVToVehicles}" Description="{DynamicResource Graphics_ApplyFOVToVehicles_Description}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Content="{DynamicResource Graphics_ApplyFOVToViewModels}"
+                                      IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToViewModelAvailable}"
+                                      IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsApplyCustomFOVToViewModel}"/>
+                            <au:InfoControl Title="{DynamicResource Graphics_ApplyFOVToViewModels}" Description="{DynamicResource Graphics_ApplyFOVToViewModels_Description}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+
+                <StackPanel Margin="24,0,0,20">
+                    <TextBlock Text="{DynamicResource Graphics_FOV}" Margin="2,0,0,8"/>
+                    <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=FOV}"
+                                  Minimum="60" Maximum="150" SpinButtonPlacementMode="Inline"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Dynamic Aspect Ratio -->
+            <Grid>
+                <Expander Name="ResolutionScaleExpander" Margin="1,10,0,8" Template="{StaticResource RevealExpander}" IsExpanded="True"
+                          IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}">
+                    <StackPanel Margin="23,25,0,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <au:LabelRow Text="{DynamicResource Graphics_ResolutionScale}"/>
+                            <au:LabelRow Text="{Binding Source={x:Static local:App.Settings}, Path=ResolutionString}" HorizontalAlignment="Right" Grid.Column="1">
+                                <au:LabelRow.TextStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontStyle" Value="Italic"/>
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </Style>
+                                </au:LabelRow.TextStyle>
+                            </au:LabelRow>
+                        </Grid>
+                        <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ResolutionScale}"
+                                      Minimum="25" Maximum="200" SpinButtonPlacementMode="Inline" ValueChanged="ResolutionScale_ValueChanged"/>
+                    </StackPanel>
+                </Expander>
+
+                <Grid VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Margin="24,0,0,0" Content="{DynamicResource Graphics_DynamicAspectRatio}"
+                                  IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatio}"
+                                  IsEnabled="{Binding Source={x:Static local:App.Settings}, Path=IsDynamicAspectRatioAvailable}"/>
+                        <au:InfoControl Title="{DynamicResource Graphics_DynamicAspectRatio}" Description="{DynamicResource Graphics_DynamicAspectRatio_Description}"/>
+                        <au:InfoControl IsWarning="True" Title="{DynamicResource Graphics_DynamicAspectRatio}" Description="{DynamicResource Graphics_DynamicAspectRatio_Warning}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+        </StackPanel>
+    </Grid>
+    
+</UserControl>

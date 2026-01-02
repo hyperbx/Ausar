@@ -1,5 +1,6 @@
 ﻿using Ausar.Enums;
 using Ausar.Helpers;
+using Ausar.Services;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.IO;
@@ -134,6 +135,8 @@ namespace Ausar
         [JsonIgnore]
         public string ResolutionString { get; set; }
 
+        public string Language { get; set; } = "en-GB";
+
         public int PatchFrequency { get; set; } = 16;
 
         public bool IsUninstallPatchesOnExit { get; set; } = true;
@@ -164,7 +167,7 @@ namespace Ausar
             }
             catch (JsonReaderException out_ex)
             {
-                MessageBox.Show($"Failed to import configuration!\n\n{out_ex.Message}\n\nThe configuration will now be reset.", "Ausar", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LocaleService.Localise("Message_Error_FailedToLoadConfig_Body", out_ex.Message), "Ausar", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 #endif
             return Export(in_isDefault);

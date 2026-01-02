@@ -2,7 +2,7 @@
 
 namespace Ausar.Helpers
 {
-    internal class ProcessHelper
+    public class ProcessHelper
     {
         public static void StartWithDefaultProgram(string in_url, string in_args = "")
         {

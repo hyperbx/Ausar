@@ -3,7 +3,7 @@ using Vanara.PInvoke;
 
 namespace Ausar.Helpers
 {
-    internal partial class User32Helper
+    public partial class User32Helper
     {
         public static int GetRefreshRate()
         {

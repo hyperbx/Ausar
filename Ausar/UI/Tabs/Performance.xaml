@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="Ausar.UI.Tabs.Performance"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ausar"
+             xmlns:au="clr-namespace:Ausar.UI.Controls"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignHeight="595"
+             d:DesignWidth="474">
+
+    <ScrollViewer>
+        <Grid Margin="25,20,25,10">
+            <Grid>
+                <Expander Name="PerformanceExpander" Margin="0,40,0,20" Template="{StaticResource RevealExpanderNoInput}" VerticalAlignment="Top">
+                    <StackPanel Margin="0,35,0,-10">
+                        <StackPanel Margin="0,5,0,20">
+                            <au:LabelRow Text="{DynamicResource Performance_GeneralDrawDistanceScalar}">
+                                <au:InfoControl Title="{DynamicResource Performance_GeneralDrawDistanceScalar}"
+                                                Description="{DynamicResource Performance_GeneralDrawDistanceScalar_Description}"/>
+                            </au:LabelRow>
+                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DrawDistanceScalar}"
+                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,20">
+                            <au:LabelRow Text="{DynamicResource Performance_ObjectDetailScalar}">
+                                <au:InfoControl Title="{DynamicResource Performance_ObjectDetailScalar}"
+                                                Description="{DynamicResource Performance_ObjectDetailScalar_Description}"/>
+                            </au:LabelRow>
+                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ObjectDetailScalar}"
+                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,20">
+                            <au:LabelRow Text="{DynamicResource Performance_BSPGeometryDrawDistanceScalar}">
+                                <au:InfoControl Title="{DynamicResource Performance_BSPGeometryDrawDistanceScalar}"
+                                                Description="{DynamicResource Performance_BSPGeometryDrawDistanceScalar_Description}"/>
+                            </au:LabelRow>
+                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=BSPGeometryDrawDistanceScalar}"
+                                          Minimum="50" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,20">
+                            <au:LabelRow Text="{DynamicResource Performance_EffectDrawDistanceScalar}">
+                                <au:InfoControl Title="{DynamicResource Performance_EffectDrawDistanceScalar}"
+                                                Description="{DynamicResource Performance_EffectDrawDistanceScalar_Description}"/>
+                            </au:LabelRow>
+                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=EffectDrawDistanceScalar}"
+                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,20">
+                            <au:LabelRow Text="{DynamicResource Performance_ParticleDrawDistanceScalar}">
+                                <au:InfoControl Title="{DynamicResource Performance_ParticleDrawDistanceScalar}"
+                                                Description="{DynamicResource Performance_ParticleDrawDistanceScalar_Description}"/>
+                            </au:LabelRow>
+                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=ParticleDrawDistanceScalar}"
+                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,15">
+                            <au:LabelRow Text="{DynamicResource Performance_DecoratorDrawDistanceScalar}">
+                                <au:InfoControl Title="{DynamicResource Performance_DecoratorDrawDistanceScalar}"
+                                                Description="{DynamicResource Performance_DecoratorDrawDistanceScalar_Description}"/>
+                            </au:LabelRow>
+                            <ui:NumberBox Value="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=DecoratorDrawDistanceScalar}"
+                                          Minimum="0" Maximum="300" SpinButtonPlacementMode="Inline" SmallChange="1"/>
+                        </StackPanel>
+
+                        <au:DescribedCheckBox Content="{DynamicResource Performance_DrawFog}" Description="{DynamicResource Performance_DrawFog_Description}"
+                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleFog}"/>
+
+                        <au:DescribedCheckBox Content="{DynamicResource Performance_DrawWeather}" Description="{DynamicResource Performance_DrawWeather_Description}"
+                                              IsChecked="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=IsToggleWeather}"/>
+                    </StackPanel>
+                </Expander>
+
+                <StackPanel>
+                    <au:LabelRow Text="{DynamicResource Performance_Preset}">
+                        <au:InfoControl Title="{DynamicResource Performance_Preset}" Description="{DynamicResource Performance_Preset_Description}"/>
+                    </au:LabelRow>
+
+                    <ComboBox Name="PerformancePresetField" HorizontalAlignment="Stretch"
+                              SelectionChanged="Performance_Preset_SelectionChanged"
+                              SelectedIndex="{Binding Mode=TwoWay, Source={x:Static local:App.Settings}, Path=PerformancePreset}">
+                        <ComboBoxItem Content="{DynamicResource Performance_Preset_High}"/>
+                        <ComboBoxItem Content="{DynamicResource Performance_Preset_Medium}"/>
+                        <ComboBoxItem Content="{DynamicResource Performance_Preset_Low}"/>
+                        <ComboBoxItem Content="{DynamicResource Performance_Preset_VeryLow}"/>
+                        <ComboBoxItem Content="{DynamicResource Performance_Preset_Custom}"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+
+</UserControl>
