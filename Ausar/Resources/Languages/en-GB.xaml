@@ -21,7 +21,7 @@
         
         Exiting now may lead to unexpected behaviour if Ausar is launched again with this same instance of Halo 5: Forge.\n\n
         
-        Are you sure you want to quit?"
+        Are you sure you want to quit?
     </system:String>
     <system:String x:Key="Message_Error_Generic_Title">An error has occurred</system:String>
     <system:String x:Key="Message_Error_GenericUnhandled_Title">An unhandled exception has occurred.\n\n{0}</system:String>
